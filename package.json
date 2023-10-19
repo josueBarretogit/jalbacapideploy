@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Awesome project developed with TypeORM.",
   "main": "build/index.js",
-  "type": "module",
+  "type": "commonjs",
   "devDependencies": {
     "@types/cors": "^2.8.14",
     "@types/node": "^16.11.10",
