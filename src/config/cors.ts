@@ -1,6 +1,9 @@
 import * as cors from "cors";
 
-const whitelist = ["https://anillosjalbacapi.onrender.com"];
+const whitelist = [
+  "https://anillosjalbacapi.onrender.com",
+  "https://anillos-jalbac.web.app",
+];
 
 const corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
