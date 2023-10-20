@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "build", "public2")));
+app.use(express.static(path.join(__dirname, "public2")));
 
 app.use("/api/usuarios", usuarioMiddleware);
 app.use("/api/anillos", anilloMiddleware);
@@ -37,4 +37,5 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`running from ${PORT}`);
   console.log(__dirname);
+  console.log(path.join(__dirname, "public2"));
 });
