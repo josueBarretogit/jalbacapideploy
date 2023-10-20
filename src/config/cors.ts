@@ -1,13 +1,10 @@
 import * as cors from "cors";
 
-const whitelist = [
-  "https://anillosjalbac.com",
-  "https://anillosjalbacapi.onrender.com",
-];
+const whitelist = ["https://anillosjalbacapi.onrender.com"];
 
 const corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       console.log(origin);
