@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/public2"));
 
 app.use("/api/usuarios", usuarioMiddleware);
 app.use("/api/anillos", anilloMiddleware);
