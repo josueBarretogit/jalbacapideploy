@@ -17,7 +17,8 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: false,
   entities: [Anillo, Dije, Usuario, Solitario],
-  connectTimeout: 20000,
+  connectTimeout: 60 * 60 * 10000,
+  acquireTimeout: 60 * 60 * 10000,
   migrations: [],
   subscribers: [],
 });
