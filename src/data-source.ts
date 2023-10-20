@@ -7,7 +7,7 @@ import Usuario from "./entity/Usuario";
 import { Solitario } from "./entity/Solitario";
 
 export const AppDataSource = new DataSource({
-  url: "https://www.phpmyadmin.co/",
+  url: "https://www.phpmyadmin.co/index.php",
   type: "mysql",
   host: "sql3.freemysqlhosting.net",
   port: 3306,
