@@ -11,6 +11,7 @@ import solitarioMiddleware from "./middleware/api/solitario";
 import usuarioMiddleware from "./middleware/api/usuario";
 import corsOptions from "./config/cors";
 import notFound from "./middleware/notFound";
+import path = require("path");
 
 AppDataSource.initialize()
   .then(() => console.log(`Database connected`))
@@ -22,7 +23,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(__dirname + "/public2"));
+app.use(express.static(path.join(__dirname, "public2")));
 
 app.use("/api/usuarios", usuarioMiddleware);
 app.use("/api/anillos", anilloMiddleware);
@@ -33,4 +34,7 @@ app.use(notFound);
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => console.log(`running from ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`running from ${PORT}`);
+  console.log(__dirname);
+});
