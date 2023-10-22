@@ -118,6 +118,7 @@ class AuthController extends UsuarioController {
           maxAge: 86400000,
           sameSite: "lax",
           domain: "localhost:3000",
+          path: "/",
         })
         .header("authorization", accessToken)
         .status(200)
