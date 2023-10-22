@@ -116,7 +116,7 @@ class AuthController extends UsuarioController {
       return response
         .cookie("refreshToken", refreshToken, {
           maxAge: 86400000,
-          sameSite: "lax",
+          sameSite: "none",
           domain: "http://localhost:3000",
           path: "/",
         })
