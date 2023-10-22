@@ -118,8 +118,6 @@ class AuthController extends UsuarioController {
           maxAge: 86400000,
           sameSite: "none",
           secure: true,
-          domain: "https://anillosjalbacapi.onrender.com",
-          path: "/",
         })
 
         .header("authorization", accessToken)
