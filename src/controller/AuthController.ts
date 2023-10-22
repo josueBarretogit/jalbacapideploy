@@ -117,7 +117,8 @@ class AuthController extends UsuarioController {
         .cookie("refreshToken", refreshToken, {
           maxAge: 86400000,
           sameSite: "none",
-          domain: "http://localhost:3000",
+          secure: true,
+          domain: "https://anillosjalbacapi.onrender.com",
           path: "/",
         })
 

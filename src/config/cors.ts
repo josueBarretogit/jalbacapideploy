@@ -18,6 +18,7 @@ const corsOptions: cors.CorsOptions = {
       callback(new Error("No esta permitodo debido a CORS"));
     }
   },
+
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
