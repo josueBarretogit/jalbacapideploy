@@ -117,6 +117,7 @@ class AuthController extends UsuarioController {
         .cookie("refreshToken", refreshToken, {
           maxAge: 86400000,
           sameSite: "lax",
+          domain: "localhost:3000",
         })
         .header("authorization", accessToken)
         .status(200)
