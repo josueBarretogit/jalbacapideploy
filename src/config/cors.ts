@@ -7,7 +7,11 @@ const whitelist = [
 
 const corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
+    if (
+      whitelist.indexOf(origin) !== -1 ||
+      !origin ||
+      /http:\/\/localhost:\w/.test(origin)
+    ) {
       callback(null, true);
     } else {
       console.log(origin);
