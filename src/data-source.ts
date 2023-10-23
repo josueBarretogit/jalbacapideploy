@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
   username: "sql3654808",
   password: "izv2VN57Hm",
   database: "sql3654808",
-  synchronize: false,
+  synchronize: true,
   logging: false,
   entities: [Anillo, Dije, Usuario, Solitario],
   connectTimeout: 60 * 60 * 10000,
