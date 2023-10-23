@@ -48,7 +48,7 @@
     "typeorm": "0.3.17"
   },
   "scripts": {
-    "build": " npm install &&  tsc --build && copyfiles -u 1 src/public2/*.jpg build/ ",
+    "build": " npm install &&  tsc --build",
     "start": "ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "launch": "node build/index.js"
