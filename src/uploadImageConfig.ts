@@ -3,7 +3,7 @@ import * as multer from "multer";
 import * as path from "path";
 import * as fs from "fs";
 import * as fsAsync from "fs/promises";
-import { IMGFOLDER } from "./constanst/constanst";
+import { IMGFOLDER } from "./constanst";
 
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {

@@ -12,10 +12,16 @@ import usuarioMiddleware from "./middleware/api/usuario";
 import corsOptions from "./config/cors";
 import notFound from "./middleware/notFound";
 import path = require("path");
+import { IMGFOLDER } from "./constanst";
+import * as fs from "fs";
 
 AppDataSource.initialize()
   .then(() => console.log(`Database connected`))
   .catch((error) => console.log(error));
+
+if (!fs.existsSync(IMGFOLDER)) {
+  fs.mkdir(IMGFOLDER, (err) => console.log(err));
+}
 
 const app = express();
 
@@ -23,7 +29,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "public2")));
+app.use(express.static(path.join(IMGFOLDER)));
 
 app.use("/api/usuarios", usuarioMiddleware);
 app.use("/api/anillos", anilloMiddleware);
