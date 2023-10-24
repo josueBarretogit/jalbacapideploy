@@ -2,7 +2,7 @@ import * as express from "express";
 import { Solitario } from "../../entity/Solitario";
 import verifyToken from "../verifyToken";
 import SolitarioController from "../../controller/SolitarioController";
-import upload from "../../uploadImageConfig";
+import { upload } from "../../uploadImageConfig";
 import verifyImage from "../imageVerifier";
 
 const controlador = new SolitarioController(Solitario);

@@ -40,8 +40,23 @@ class AnilloController extends AnilloRepository {
     }
     try {
       const anillo: any = { ...request.body };
-      anillo.foto = request.file?.filename;
+      const imgData = this.dUri.format(
+        path.extname(request.file.originalname).toString(),
+        request.file.buffer,
+      );
+      const imgurl = this.cloudinaryProvider.uploader.upload(
+        request.file.path,
+        (error, result) => {
+          if (error)
+            return response
+              .status(500)
+              .json({ response: "Fallo al subir imagen", error });
+          console.log(result);
+        },
+      );
+
       const anilloCreated = await this.create(anillo);
+
       response.status(200).json(anilloCreated);
     } catch (error) {
       return response.status(400).json({ error: error });

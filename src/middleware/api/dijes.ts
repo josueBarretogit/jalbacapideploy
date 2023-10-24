@@ -2,7 +2,7 @@ import DijeController from "../../controller/DijeController";
 import * as express from "express";
 import { Dije } from "../../entity/Dije";
 import verifyToken from "../verifyToken";
-import upload from "../../uploadImageConfig";
+import { upload } from "../../uploadImageConfig";
 import verifyImage from "../imageVerifier";
 
 const controlador = new DijeController(Dije);

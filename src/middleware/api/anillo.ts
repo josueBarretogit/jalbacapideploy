@@ -3,7 +3,8 @@ import * as express from "express";
 import { Anillo } from "../../entity/Anillo";
 import verifyToken from "../verifyToken";
 import verifyImage from "../imageVerifier";
-import upload from "../../uploadImageConfig";
+import { upload } from "../../uploadImageConfig";
+
 import AnilloController from "../../controller/AnilloController";
 
 const controlador = new AnilloController(Anillo);
