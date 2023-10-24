@@ -4,6 +4,7 @@ import { EntityTarget } from "typeorm";
 import { Request, Response } from "express";
 import * as fs from "fs/promises";
 import * as path from "path";
+import DataURIParser from "datauri/parser";
 
 class AnilloController extends AnilloRepository {
   constructor(entity: EntityTarget<Anillo>) {
@@ -40,20 +41,25 @@ class AnilloController extends AnilloRepository {
     }
     try {
       const anillo: any = { ...request.body };
-      const imgData = this.dUri.format(
-        path.extname(request.file.originalname).toString(),
+
+      const filename = request.file.originalname;
+      const imgParser = new DataURIParser();
+
+      const imgData = imgParser.format(
+        filename + Date.now() + path.extname(filename).toString(),
         request.file.buffer,
       );
-      const imgurl = this.cloudinaryProvider.uploader.upload(
-        request.file.path,
+
+      const imgurl = await this.cloudinaryProvider.uploader.upload(
+        imgData.content,
         (error, result) => {
           if (error)
             return response
               .status(500)
               .json({ response: "Fallo al subir imagen", error });
-          console.log(result);
         },
       );
+      console.log(imgurl);
 
       const anilloCreated = await this.create(anillo);
 

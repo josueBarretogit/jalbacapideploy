@@ -8,13 +8,11 @@ import {
 } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { cloudinary } from "../uploadImageConfig";
-const Datauri = require("datauri");
 
 class GenericRepository<T> {
   public orderById: FindOptionsOrder<T>;
   protected repository: Repository<T>;
   public cloudinaryProvider = cloudinary;
-  public dUri = new Datauri();
 
   constructor(entity: EntityTarget<T>) {
     this.repository = AppDataSource.getRepository(entity);

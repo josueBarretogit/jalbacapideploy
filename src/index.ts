@@ -1,9 +1,9 @@
 require("dotenv").config();
 
-import * as bodyParser from "body-parser";
-import * as cookieParser from "cookie-parser";
-import * as cors from "cors";
-import * as express from "express";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
 import { AppDataSource } from "./data-source";
 import anilloMiddleware from "./middleware/api/anillo";
 import dijeMiddleware from "./middleware/api/dijes";
