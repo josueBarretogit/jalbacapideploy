@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { cloudinary } from "../uploadImageConfig";
+import { IEntity } from "../entity/Intefaceses";
 
 class GenericRepository<T> {
   public orderById: FindOptionsOrder<T>;
@@ -59,6 +60,8 @@ class GenericRepository<T> {
 
   async delete(searchTerm: FindOptionsWhere<T>): Promise<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
+
+    console.log((entitytoDelete as { foto: string }).foto);
 
     return entitytoDelete;
   }
