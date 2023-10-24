@@ -9,7 +9,7 @@ import {
 import { AppDataSource } from "../data-source";
 import { cloudinary } from "../uploadImageConfig";
 
-class GenericRepository<T> {
+class GenericRepository<T extends { foto: string }> {
   public orderById: FindOptionsOrder<T>;
   protected repository: Repository<T>;
   public cloudinaryProvider = cloudinary;
@@ -59,7 +59,10 @@ class GenericRepository<T> {
 
   async delete(searchTerm: FindOptionsWhere<T>): Promise<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
-    return this.repository.remove(entitytoDelete);
+    // this.cloudinaryProvider.uploader.destroy(entitytoDelete.foto);
+    console.log(entitytoDelete.foto);
+
+    return entitytoDelete;
   }
 }
 

@@ -96,9 +96,8 @@ class AnilloController extends AnilloRepository {
     }
     try {
       const searchTermIdAnillo: any = { ...request.body };
-      const anillo = await this.delete(searchTermIdAnillo);
 
-      await fs.unlink(path.join(__dirname, "..", "public", anillo.foto));
+      const anillo = await this.delete(searchTermIdAnillo);
 
       return response.status(200).json(anillo);
     } catch (error) {
