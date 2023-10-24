@@ -46,7 +46,7 @@ class AnilloController extends AnilloRepository {
       const imgParser = new DataURIParser();
 
       const imgData = imgParser.format(
-        filename + Date.now() + path.extname(filename).toString(),
+        path.extname(filename).toString(),
         request.file.buffer,
       );
 
