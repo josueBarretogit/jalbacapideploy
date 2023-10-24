@@ -61,6 +61,8 @@ class AnilloController extends AnilloRepository {
       );
       console.log(imgurl);
 
+      anillo.foto = imgurl.url;
+      console.log(anillo.foto);
       const anilloCreated = await this.create(anillo);
 
       response.status(200).json(anilloCreated);
