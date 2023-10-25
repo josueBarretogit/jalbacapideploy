@@ -49,6 +49,12 @@ class AnilloController extends AnilloRepository {
           request.file.originalname,
         );
 
+      if ("message" in uploaderServiceReponse) {
+        return response
+          .status(500)
+          .json({ response: uploaderServiceReponse.message });
+      }
+
       anillo.foto = uploaderServiceReponse.url;
 
       console.log(anillo.foto);
