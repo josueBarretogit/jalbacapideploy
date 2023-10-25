@@ -7,15 +7,16 @@ import {
   Repository,
 } from "typeorm";
 import { AppDataSource } from "../data-source";
-import { cloudinary } from "../uploadImageConfig";
+import CloudinaryService from "../services/cloudinaryService";
 
 class GenericRepository<T> {
   public orderById: FindOptionsOrder<T>;
   protected repository: Repository<T>;
-  public cloudinaryProvider = cloudinary;
+  public CloudinaryService: CloudinaryService;
 
   constructor(entity: EntityTarget<T>) {
     this.repository = AppDataSource.getRepository(entity);
+    this.CloudinaryService = new CloudinaryService();
   }
 
   async getAll(relations?: FindOptionsRelations<T>): Promise<T[]> {
@@ -57,21 +58,11 @@ class GenericRepository<T> {
     return this.repository.save(entityToUpdate);
   }
 
-  async deleteJoya(searchTerm: FindOptionsWhere<T>): Promise<T> {
-    const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
-    const splitUrl = (entitytoDelete as { foto: string }).foto.split("/");
-    const imgUrl = splitUrl[splitUrl.length - 1];
-    this.cloudinaryProvider.uploader.destroy(imgUrl);
-    console.log((entitytoDelete as any).foto);
-    return this.repository.remove(entitytoDelete);
-  }
-
   async delete(searchTerm: FindOptionsWhere<T>): Promise<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
-    const splitUrl = (entitytoDelete as { foto: string }).foto.split("/");
-    const imgUrl = splitUrl[splitUrl.length - 1];
-    this.cloudinaryProvider.uploader.destroy(imgUrl);
-    console.log((entitytoDelete as any).foto);
+    // const splitUrl = (entitytoDelete as { foto: string }).foto.split("/");
+    // const imgUrl = splitUrl[splitUrl.length - 1];
+    // console.log((entitytoDelete as any).foto);
     return this.repository.remove(entitytoDelete);
   }
 }

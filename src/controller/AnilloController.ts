@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import * as fs from "fs/promises";
 import * as path from "path";
 import DataURIParser from "datauri/parser";
+import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 
 class AnilloController extends AnilloRepository {
   constructor(entity: EntityTarget<Anillo>) {
@@ -42,30 +43,18 @@ class AnilloController extends AnilloRepository {
     try {
       const anillo: any = { ...request.body };
 
-      const filename = request.file.originalname;
-      const imgParser = new DataURIParser();
+      const uploaderServiceReponse: UploadApiResponse | UploadApiErrorResponse =
+        await this.CloudinaryService.uploadImage(
+          request.file.buffer,
+          request.file.originalname,
+        );
 
-      const imgData = imgParser.format(
-        path.extname(filename).toString(),
-        request.file.buffer,
-      );
+      anillo.foto = uploaderServiceReponse.url;
 
-      const imgurl = await this.cloudinaryProvider.uploader.upload(
-        imgData.content,
-        (error, result) => {
-          if (error)
-            return response
-              .status(500)
-              .json({ response: "Fallo al subir imagen", error });
-        },
-      );
-      console.log(imgurl);
-
-      anillo.foto = imgurl.url;
       console.log(anillo.foto);
-      const anilloCreated = await this.create(anillo);
+      const anilloCreated: Anillo = await this.create(anillo);
 
-      response.status(200).json({ anilloCreated, imgurl });
+      response.status(200).json({ anilloCreated, foto: anilloCreated.foto });
     } catch (error) {
       return response.status(400).json({ error: error });
     }
