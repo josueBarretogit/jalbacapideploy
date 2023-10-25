@@ -82,7 +82,7 @@ class UsuarioController extends UsuarioRepository {
     try {
       const searchTermIdUsuario: any = { ...request.body };
 
-      const usuarioDeleted = await this.delete(searchTermIdUsuario);
+      const usuarioDeleted = await this.repository.remove(searchTermIdUsuario);
       return response.status(200).json(usuarioDeleted);
     } catch (error) {
       return response.status(400).json({ error: error });

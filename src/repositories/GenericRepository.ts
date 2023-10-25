@@ -8,7 +8,6 @@ import {
 } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { cloudinary } from "../uploadImageConfig";
-import { IEntity } from "../entity/Intefaceses";
 
 class GenericRepository<T> {
   public orderById: FindOptionsOrder<T>;
@@ -58,12 +57,22 @@ class GenericRepository<T> {
     return this.repository.save(entityToUpdate);
   }
 
+  async deleteJoya(searchTerm: FindOptionsWhere<T>): Promise<T> {
+    const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
+    const splitUrl = (entitytoDelete as { foto: string }).foto.split("/");
+    const imgUrl = splitUrl[splitUrl.length - 1];
+    this.cloudinaryProvider.uploader.destroy(imgUrl);
+    console.log((entitytoDelete as any).foto);
+    return this.repository.remove(entitytoDelete);
+  }
+
   async delete(searchTerm: FindOptionsWhere<T>): Promise<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
-
-    console.log((entitytoDelete as { foto: string }).foto);
-
-    return entitytoDelete;
+    const splitUrl = (entitytoDelete as { foto: string }).foto.split("/");
+    const imgUrl = splitUrl[splitUrl.length - 1];
+    this.cloudinaryProvider.uploader.destroy(imgUrl);
+    console.log((entitytoDelete as any).foto);
+    return this.repository.remove(entitytoDelete);
   }
 }
 
