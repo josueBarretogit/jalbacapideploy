@@ -31,7 +31,22 @@ class CloudinaryService {
 
     return imgMetaData;
   }
-  async deleteImage(idJoya: number, publicId: string) {}
+
+  async deleteImage(url: string) {
+    const parseUrl = url.split("/");
+
+    const publicId = parseUrl[parseUrl.length - 1];
+
+    return this.uploader.destroy(publicId);
+  }
+
+  async updateImage(url: string) {
+    const parseUrl = url.split("/");
+
+    const publicId = parseUrl[parseUrl.length - 1];
+
+    return this.uploader.destroy(publicId);
+  }
 }
 
 export default CloudinaryService;

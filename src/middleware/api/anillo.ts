@@ -4,8 +4,8 @@ import { Anillo } from "../../entity/Anillo";
 import verifyToken from "../verifyToken";
 import verifyImage from "../imageVerifier";
 import { upload } from "../../uploadImageConfig";
-
 import AnilloController from "../../controller/AnilloController";
+import { handleMulterUpload } from "../multerErroHandler";
 
 const controlador = new AnilloController(Anillo);
 const router = express.Router();
@@ -18,7 +18,7 @@ router
   .route("/create")
   .post(
     verifyToken,
-    upload.single("image"),
+    handleMulterUpload,
     verifyImage,
     controlador.createAnillo.bind(controlador),
   );
