@@ -90,9 +90,16 @@ class AnilloController extends AnilloRepository {
       return;
     }
     try {
+      console.log(request.body.id);
       const searchTermIdAnillo: any = { ...request.body };
 
       const anillo = await this.delete(searchTermIdAnillo);
+
+      const deleteOperationResponse = await this.CloudinaryService.deleteImage(
+        anillo.foto,
+      );
+
+      console.log(deleteOperationResponse);
 
       return response.status(200).json(anillo);
     } catch (error) {

@@ -8,17 +8,15 @@ import { Solitario } from "./entity/Solitario";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: "sql3.freemysqlhosting.net",
+  host: "localhost",
 
   port: 3306,
-  username: "sql3654808",
-  password: "izv2VN57Hm",
-  database: "sql3654808",
+  username: "root",
+  password: "",
+  database: "anillosjalbac",
   synchronize: false,
   logging: false,
   entities: [Anillo, Dije, Usuario, Solitario],
-  connectTimeout: 60 * 60 * 10000,
-  acquireTimeout: 60 * 60 * 10000,
   migrations: [],
   subscribers: [],
 });
@@ -39,16 +37,3 @@ export const AppDataSource = new DataSource({
 //   migrations: [],
 //   subscribers: [],
 //  }
-
-// type: "mysql",
-//   host: "localhost",
-//
-//   port: 3306,
-//   username: "root",
-//   password: "",
-//   database: "anillosjalbac",
-//   synchronize: false,
-//   logging: false,
-//   entities: [Anillo, Dije, Usuario, Solitario],
-//   migrations: [],
-//   subscribers: [],

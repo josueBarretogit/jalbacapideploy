@@ -78,8 +78,6 @@ class DijeController extends DijeRepository {
       const searchTermIdDije: any = { ...request.body };
       const dije = await this.delete(searchTermIdDije);
 
-      await fs.unlink(path.join(__dirname, "..", "public", dije.foto));
-
       return response.status(200).json(dije);
     } catch (error) {
       return response

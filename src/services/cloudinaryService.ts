@@ -37,7 +37,9 @@ class CloudinaryService {
 
     const publicId = parseUrl[parseUrl.length - 1];
 
-    return this.uploader.destroy(publicId);
+    const publicIdWithoutExtname = publicId.split(".")[0];
+    console.log(publicIdWithoutExtname);
+    return this.uploader.destroy(publicIdWithoutExtname);
   }
 
   async updateImage(url: string) {

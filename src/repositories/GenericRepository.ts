@@ -60,9 +60,7 @@ class GenericRepository<T> {
 
   async delete(searchTerm: FindOptionsWhere<T>): Promise<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
-    // const splitUrl = (entitytoDelete as { foto: string }).foto.split("/");
-    // const imgUrl = splitUrl[splitUrl.length - 1];
-    // console.log((entitytoDelete as any).foto);
+    console.log(entitytoDelete);
     return this.repository.remove(entitytoDelete);
   }
 }
