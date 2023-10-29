@@ -109,18 +109,24 @@ class AnilloController extends AnilloRepository {
     }
   }
   async replaceImage(request: Request, response: Response) {
-    if (!Object.keys(request.body).length) {
+    if (!Object.keys(request.body.id)) {
       console.log(request.body);
       response.status(400).json({ response: "Peticion sin cuerpo" });
       return;
     }
     try {
-      const anilloValues: Anillo = { ...request.body };
-      const anilloUpdated = await this.update(
-        { id: parseInt(request.params.id) },
-        anilloValues,
+      const anilloToReplaceImage: Anillo = await this.getBy(request.body.id);
+      const url = anilloToReplaceImage.foto;
+      const buffer = anilloToReplaceImage.foto;
+      const filename = anilloToReplaceImage.foto;
+
+      const cloudinaryResponse = await this.CloudinaryService.updateImage(
+        url,
+        buffer,
+        filename,
       );
-      return response.status(200).json(anilloUpdated);
+
+      return response.status(200).json(anilloToReplaceImage);
     } catch (error) {
       return response.status(400).json({ error: error });
     }

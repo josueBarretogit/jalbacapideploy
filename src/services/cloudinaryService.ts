@@ -38,16 +38,12 @@ class CloudinaryService {
     const publicId = parseUrl[parseUrl.length - 1];
 
     const publicIdWithoutExtname = publicId.split(".")[0];
-    console.log(publicIdWithoutExtname);
     return this.uploader.destroy(publicIdWithoutExtname);
   }
 
-  async updateImage(url: string) {
-    const parseUrl = url.split("/");
-
-    const publicId = parseUrl[parseUrl.length - 1];
-
-    return this.uploader.destroy(publicId);
+  async updateImage(url: string, buffer: Buffer, filename: string) {
+    await this.deleteImage(url);
+    return this.uploadImage(buffer, filename);
   }
 }
 
