@@ -33,6 +33,11 @@ router
 
 router
   .route("/replaceImage/:id")
-  .patch(verifyToken, controlador.replaceImage.bind(controlador));
+  .patch(
+    verifyToken,
+    handleMulterUpload,
+    verifyImage,
+    controlador.replaceImage.bind(controlador),
+  );
 
 export default router;

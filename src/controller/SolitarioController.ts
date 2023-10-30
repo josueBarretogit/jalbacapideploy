@@ -15,13 +15,13 @@ class SolitarioController extends SolitarioRepository {
       const solitarios = await this.getAll();
       return response.status(200).json(solitarios);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async getSolitario(request: Request, response: Response) {
     if (!request.body.id) {
-      response.status(400).json({ response: "No se encontro id" });
+      response.status(400).json("No se encontro id");
       return;
     }
 
@@ -31,13 +31,13 @@ class SolitarioController extends SolitarioRepository {
       response.status(200).json(solitario);
       return;
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async createSolitario(request: Request, response: Response) {
     if (!Object.keys(request.body).length) {
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
 
@@ -47,13 +47,13 @@ class SolitarioController extends SolitarioRepository {
       const solitarioCreated = await this.create(solitario);
       return response.status(200).json(solitarioCreated);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async updateSolitario(request: Request, response: Response) {
     if (!Object.keys(request.body).length || !request.body.id) {
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
 
@@ -66,13 +66,13 @@ class SolitarioController extends SolitarioRepository {
       response.status(200).json(solitarioUpdated);
       return;
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async deleteSolitario(request: Request, response: Response) {
     if (!request.body.id) {
-      response.status(400).json({ response: "No se encontró id" });
+      response.status(400).json("No se encontró id");
       return;
     }
 

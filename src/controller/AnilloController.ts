@@ -17,13 +17,13 @@ class AnilloController extends AnilloRepository {
       const anillos = await this.getAll();
       return response.status(200).json(anillos);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async getAnillo(request: Request, response: Response) {
     if (!request.body.id) {
-      response.status(400).json({ response: "No se encontro id" });
+      response.status(400).json("No se encontro id");
       return;
     }
     try {
@@ -31,13 +31,13 @@ class AnilloController extends AnilloRepository {
       const anillo = await this.getBy(searchTermIdAnillo);
       return response.status(200).json(anillo);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async createAnillo(request: Request, response: Response) {
     if (!Object.keys(request.body).length) {
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
@@ -62,14 +62,14 @@ class AnilloController extends AnilloRepository {
 
       response.status(200).json({ anilloCreated, foto: anilloCreated.foto });
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async updateAnillo(request: Request, response: Response) {
     if (!Object.keys(request.body).length) {
       console.log(request.body);
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
@@ -80,13 +80,13 @@ class AnilloController extends AnilloRepository {
       );
       return response.status(200).json(anilloUpdated);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async deleteAnillo(request: Request, response: Response) {
     if (!request.body.id) {
-      response.status(400).json({ response: "No se encontró id" });
+      response.status(400).json("No se encontró id");
       return;
     }
     try {
@@ -109,16 +109,19 @@ class AnilloController extends AnilloRepository {
     }
   }
   async replaceImage(request: Request, response: Response) {
-    if (!Object.keys(request.body.id)) {
+    if (!Object.keys(request.params.id)) {
       console.log(request.body);
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
-      const anilloToReplaceImage: Anillo = await this.getBy(request.body.id);
+      const anilloToReplaceImage: Anillo = await this.getBy({
+        id: parseInt(request.params.id),
+      });
+
       const url = anilloToReplaceImage.foto;
-      const buffer = anilloToReplaceImage.foto;
-      const filename = anilloToReplaceImage.foto;
+      const buffer = request.file.buffer;
+      const filename = request.file.originalname;
 
       const cloudinaryResponse = await this.CloudinaryService.updateImage(
         url,
@@ -126,9 +129,17 @@ class AnilloController extends AnilloRepository {
         filename,
       );
 
-      return response.status(200).json(anilloToReplaceImage);
+      anilloToReplaceImage.foto = cloudinaryResponse.url;
+
+      const updatedAnillo: Anillo = await this.update(
+        { id: anilloToReplaceImage.id },
+        anilloToReplaceImage,
+      );
+      console.log(cloudinaryResponse);
+
+      return response.status(200).json(updatedAnillo);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 }

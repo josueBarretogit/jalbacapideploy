@@ -15,13 +15,13 @@ class DijeController extends DijeRepository {
       const dijes = await this.getAll();
       return response.status(200).json(dijes);
     } catch (error) {
-      return response.status(400).json({ messagge: error });
+      return response.status(400).json(error);
     }
   }
 
   async getDije(request: Request, response: Response) {
     if (!request.body.id) {
-      response.status(400).json({ response: "No se encontro id" });
+      response.status(400).json("No se encontro id");
       return;
     }
     try {
@@ -29,13 +29,13 @@ class DijeController extends DijeRepository {
       const dije = await this.getBy(searchTermIdDije);
       return response.status(200).json(dije);
     } catch (error) {
-      return response.status(400).json({ messagge: error });
+      return response.status(400).json(error);
     }
   }
 
   async createDije(request: Request, response: Response) {
     if (!Object.keys(request.body).length) {
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
@@ -46,14 +46,14 @@ class DijeController extends DijeRepository {
 
       return response.status(200).json(dijeCreated);
     } catch (error) {
-      return response.status(400).json({ messagge: error });
+      return response.status(400).json(error);
     }
   }
 
   async updateDije(request: Request, response: Response) {
     const receivedInvalidBody = !Object.keys(request.body).length;
     if (receivedInvalidBody) {
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
@@ -64,13 +64,13 @@ class DijeController extends DijeRepository {
       );
       return response.status(200).json(dijeUpdated);
     } catch (error) {
-      return response.status(400).json({ messagge: error });
+      return response.status(400).json(error);
     }
   }
 
   async deleteDije(request: Request, response: Response) {
     if (!request.body.id) {
-      response.status(400).json({ response: "No se encontro id" });
+      response.status(400).json("No se encontro id");
 
       return;
     }
