@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
   username: "root",
   password: "",
   database: "anillosjalbac",
-  synchronize: false,
+  synchronize: true,
   logging: false,
   entities: [Anillo, Dije, Usuario, Solitario],
   migrations: [],

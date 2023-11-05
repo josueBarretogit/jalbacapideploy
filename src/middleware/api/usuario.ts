@@ -3,6 +3,7 @@ import Usuario from "../../entity/Usuario";
 import verifyToken from "../verifyToken";
 import AuthController from "../../controller/AuthController";
 import UsuarioController from "../../controller/UsuarioController";
+import { upload } from "../../uploadImageConfig";
 
 const controlador = new UsuarioController(Usuario);
 const authControlador = new AuthController(Usuario);
@@ -10,7 +11,9 @@ const router = express.Router();
 
 router.route("/register").post(authControlador.register.bind(authControlador));
 
-router.route("/login").post(authControlador.logIn.bind(authControlador));
+router
+  .route("/login")
+  .post(upload.none(), authControlador.logIn.bind(authControlador));
 
 router
   .route("/refresh")

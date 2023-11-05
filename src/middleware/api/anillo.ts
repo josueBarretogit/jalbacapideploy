@@ -28,7 +28,7 @@ router
   .put(upload.none(), controlador.updateAnillo.bind(controlador));
 
 router
-  .route("/eliminarAnillo")
+  .route("/eliminar/:id")
   .delete(verifyToken, controlador.deleteAnillo.bind(controlador));
 
 router

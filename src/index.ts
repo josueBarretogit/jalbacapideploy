@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(express.static(IMGFOLDER));
 
 app.use("/api/usuarios", usuarioMiddleware);
-app.use("/api/anillos", anilloMiddleware);
+app.use("/api/nombres", anilloMiddleware);
 app.use("/api/dijes", dijeMiddleware);
 app.use("/api/solitarios", solitarioMiddleware);
 

@@ -1,6 +1,6 @@
 import AnilloRepository from "../repositories/AnilloRepositorio";
 import { Anillo } from "../entity/Anillo";
-import { EntityTarget } from "typeorm";
+import { EntityTarget, FindOptionsWhere } from "typeorm";
 import { Request, Response } from "express";
 import * as fs from "fs/promises";
 import * as path from "path";
@@ -85,13 +85,14 @@ class AnilloController extends AnilloRepository {
   }
 
   async deleteAnillo(request: Request, response: Response) {
-    if (!request.body.id) {
+    if (!request.params.id) {
       response.status(400).json("No se encontró id");
       return;
     }
     try {
-      console.log(request.body.id);
-      const searchTermIdAnillo: any = { ...request.body };
+      const searchTermIdAnillo: FindOptionsWhere<Anillo> = {
+        id: parseInt(request.params.id),
+      };
 
       const anillo = await this.delete(searchTermIdAnillo);
 
@@ -105,7 +106,7 @@ class AnilloController extends AnilloRepository {
     } catch (error) {
       return response
         .status(400)
-        .json({ error: error + "No se encontró el anillo a eliminar" });
+        .json(error + "No se encontró el anillo a eliminar");
     }
   }
   async replaceImage(request: Request, response: Response) {
@@ -128,6 +129,10 @@ class AnilloController extends AnilloRepository {
         buffer,
         filename,
       );
+
+      if ("message" in cloudinaryResponse) {
+        return response.status(500).json(cloudinaryResponse.message);
+      }
 
       anilloToReplaceImage.foto = cloudinaryResponse.url;
 
