@@ -75,7 +75,7 @@ class AnilloController extends AnilloRepository {
     try {
       const anilloValues: Anillo = { ...request.body };
       const anilloUpdated = await this.update(
-        { id: parseInt(request.params.id) },
+        { id: parseInt(request.query.id as string) },
         anilloValues,
       );
       return response.status(200).json(anilloUpdated);
@@ -85,13 +85,13 @@ class AnilloController extends AnilloRepository {
   }
 
   async deleteAnillo(request: Request, response: Response) {
-    if (!request.params.id) {
+    if (!request.query.id) {
       response.status(400).json("No se encontró id");
       return;
     }
     try {
       const searchTermIdAnillo: FindOptionsWhere<Anillo> = {
-        id: parseInt(request.params.id),
+        id: parseInt(request.query.id as string),
       };
 
       const anillo = await this.delete(searchTermIdAnillo);
@@ -110,14 +110,14 @@ class AnilloController extends AnilloRepository {
     }
   }
   async replaceImage(request: Request, response: Response) {
-    if (!Object.keys(request.params.id)) {
+    if (!Object.keys(request.query.id)) {
       console.log(request.body);
       response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
       const anilloToReplaceImage: Anillo = await this.getBy({
-        id: parseInt(request.params.id),
+        id: parseInt(request.query.id as string),
       });
 
       const url = anilloToReplaceImage.foto;

@@ -4,6 +4,7 @@ const whitelist = [
   "https://anillosjalbacapi.onrender.com",
   "https://anillos-jalbac.web.app",
   "https://anillos-jalbac-79f5f.web.app",
+  "http://192.168.0.108:3000",
 ];
 
 const corsOptions: cors.CorsOptions = {

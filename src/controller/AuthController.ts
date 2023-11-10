@@ -12,59 +12,36 @@ class AuthController extends UsuarioController {
 
   async register(request: Request, response: Response) {
     if (!request.body.correo || !request.body.contrasena) {
-      response.status(400).json({ response: "Peticion sin cuerpo" });
+      response.status(400).json("No se ingresó los datos necesarios");
       return;
     }
     try {
-      const { correo, contrasena } = request.body;
+      const { correo, contrasena, rol }: Usuario = request.body;
 
       const userAlreadyExist: Usuario = await this.getBy({ correo: correo });
+
       if (userAlreadyExist) {
-        response.status(400).json({ response: "correo ya existe" });
+        response.status(400).json("Correo ya existe");
         return;
       }
-      const usuarioToCreate = new Usuario(correo, contrasena);
+
+      const usuarioToCreate = new Usuario(correo, contrasena, rol);
+
       const erroresValidacion =
         await this.validateCreateUsuario(usuarioToCreate);
 
       if (erroresValidacion.length > 0) {
-        response.status(400).json({ errors: erroresValidacion });
+        response.status(400).json(erroresValidacion);
         return;
       }
 
       usuarioToCreate.contrasena = await this.encryptPassword(contrasena);
 
-      const usuarioCreated = await this.createUsuario(usuarioToCreate);
+      await this.createUsuario(usuarioToCreate);
 
-      const accessToken = jwt.sign(
-        {
-          id: usuarioCreated?.id,
-          correo: usuarioCreated?.correo,
-        },
-        process.env.PRIVATE_KEY as string,
-        { expiresIn: "10m" },
-      );
-
-      const refreshToken = jwt.sign(
-        {
-          id: usuarioCreated?.id,
-          correo: usuarioCreated?.correo,
-        },
-        process.env.PRIVATE_REFRESH_KEY as string,
-        { expiresIn: "1d" },
-      );
-
-      return response
-        .cookie("refreshToken", refreshToken, {
-          maxAge: 10000 * 300,
-          httpOnly: true,
-          sameSite: "strict",
-        })
-        .header("authorization", accessToken)
-        .status(200)
-        .json({ isRegistered: true, usuarioCreated: usuarioCreated });
+      return response.status(200).json("Usuario registrado exitosamente");
     } catch (error) {
-      return response.status(400).json({ errors: error });
+      return response.status(500).json(error);
     }
   }
 
@@ -125,6 +102,7 @@ class AuthController extends UsuarioController {
         .json({
           isLogged: true,
           correo: foundUsuario.correo,
+          rol: foundUsuario.rol,
           idUsuario: foundUsuario.id,
           accessToken,
         });
@@ -168,7 +146,7 @@ class AuthController extends UsuarioController {
         .header("authorization", newAccessToken)
         .json({ response: "token refreshed" });
     } catch (error) {
-      return response.status(400).json({ errors: error });
+      return response.status(400).json(error);
     }
   }
 }

@@ -36,7 +36,7 @@ app.use(notFound);
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log(`running from ${PORT}`);
+  console.log(`running from localhost:${PORT}`);
   console.log(__dirname);
   console.log(path.join(IMGFOLDER));
 });

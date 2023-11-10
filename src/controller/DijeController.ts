@@ -1,9 +1,8 @@
 import DijeRepository from "../repositories/DijeRepository";
-import { EntityTarget } from "typeorm";
+import { EntityTarget, FindOptionsWhere } from "typeorm";
 import { Request, Response } from "express";
 import { Dije } from "../entity/Dije";
-import * as path from "path";
-import * as fs from "fs/promises";
+import { UploadApiResponse, UploadApiErrorResponse } from "cloudinary";
 
 class DijeController extends DijeRepository {
   constructor(entity: EntityTarget<Dije>) {
@@ -39,11 +38,22 @@ class DijeController extends DijeRepository {
       return;
     }
     try {
-      const dije: any = { ...request.body };
+      const dije: Dije = { ...request.body };
 
-      dije.foto = request.file?.filename;
+      const uploaderServiceReponse: UploadApiResponse | UploadApiErrorResponse =
+        await this.CloudinaryService.uploadImage(
+          request.file.buffer,
+          request.file.originalname,
+        );
+
+      if ("message" in uploaderServiceReponse) {
+        return response
+          .status(500)
+          .json({ response: uploaderServiceReponse.message });
+      }
+
+      dije.foto = uploaderServiceReponse.url;
       const dijeCreated = await this.create(dije);
-
       return response.status(200).json(dijeCreated);
     } catch (error) {
       return response.status(400).json(error);
@@ -51,17 +61,18 @@ class DijeController extends DijeRepository {
   }
 
   async updateDije(request: Request, response: Response) {
-    const receivedInvalidBody = !Object.keys(request.body).length;
-    if (receivedInvalidBody) {
+    if (!Object.keys(request.body).length) {
       response.status(400).json("Peticion sin cuerpo");
       return;
     }
     try {
-      const dijeToUpdate = { ...request.body };
+      const dijeToUpdate: Dije = { ...request.body };
+
       const dijeUpdated = await this.update(
-        { id: dijeToUpdate.idDije },
+        { id: parseInt(request.query.id as string) },
         dijeToUpdate,
       );
+
       return response.status(200).json(dijeUpdated);
     } catch (error) {
       return response.status(400).json(error);
@@ -69,20 +80,65 @@ class DijeController extends DijeRepository {
   }
 
   async deleteDije(request: Request, response: Response) {
-    if (!request.body.id) {
+    if (!request.query.id) {
       response.status(400).json("No se encontro id");
 
       return;
     }
     try {
-      const searchTermIdDije: any = { ...request.body };
-      const dije = await this.delete(searchTermIdDije);
+      const searchTermDije: FindOptionsWhere<Dije> = {
+        id: parseInt(request.query.id as string),
+      };
 
-      return response.status(200).json(dije);
+      const dijeDeleted = await this.delete(searchTermDije);
+
+      const deleteOperationResponse = await this.CloudinaryService.deleteImage(
+        dijeDeleted.foto,
+      );
+
+      console.log(deleteOperationResponse);
+
+      return response.status(200).json(dijeDeleted);
     } catch (error) {
-      return response
-        .status(400)
-        .json({ messagge: error + "No se encontró el dije a eliminar" });
+      return response.status(400).json({ messagge: error });
+    }
+  }
+  async replaceImage(request: Request, response: Response) {
+    if (!Object.keys(request.query.id)) {
+      console.log(request.body);
+      response.status(400).json("Peticion sin cuerpo");
+      return;
+    }
+    try {
+      const dijeToReplaceImage: Dije = await this.getBy({
+        id: parseInt(request.query.id as string),
+      });
+
+      const url = dijeToReplaceImage.foto;
+      const buffer = request.file.buffer;
+      const filename = request.file.originalname;
+
+      const cloudinaryResponse = await this.CloudinaryService.updateImage(
+        url,
+        buffer,
+        filename,
+      );
+
+      if ("message" in cloudinaryResponse) {
+        return response.status(500).json(cloudinaryResponse.message);
+      }
+
+      dijeToReplaceImage.foto = cloudinaryResponse.url;
+
+      const updatedDije: Dije = await this.update(
+        { id: dijeToReplaceImage.id },
+        dijeToReplaceImage,
+      );
+      console.log(cloudinaryResponse);
+
+      return response.status(200).json(updatedDije);
+    } catch (error) {
+      return response.status(400).json(error);
     }
   }
 }

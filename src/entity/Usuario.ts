@@ -1,11 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from "class-validator";
+
 @Entity({ name: "usuarios", schema: "public" })
 export class Usuario {
-  constructor(correo: string, contrasena: string) {
+  constructor(correo: string, contrasena: string, rol: string) {
     this.correo = correo;
     this.contrasena = contrasena;
+    this.rol = rol;
   }
 
   @PrimaryGeneratedColumn()
@@ -31,6 +33,9 @@ export class Usuario {
   })
   @Column("varchar", { length: 100 })
   contrasena: string;
+
+  @Column("varchar", { length: 100 })
+  rol: string;
 }
 
 export default Usuario;

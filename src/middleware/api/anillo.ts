@@ -24,15 +24,15 @@ router
   );
 
 router
-  .route("/editar/:id")
-  .put(upload.none(), controlador.updateAnillo.bind(controlador));
+  .route("/editar")
+  .put(verifyToken, upload.none(), controlador.updateAnillo.bind(controlador));
 
 router
-  .route("/eliminar/:id")
+  .route("/eliminar")
   .delete(verifyToken, controlador.deleteAnillo.bind(controlador));
 
 router
-  .route("/replaceImage/:id")
+  .route("/replaceImage")
   .patch(
     verifyToken,
     handleMulterUpload,

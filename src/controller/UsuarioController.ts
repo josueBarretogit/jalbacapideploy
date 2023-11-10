@@ -1,7 +1,7 @@
 require("dotenv").config();
 import UsuarioRepository from "../repositories/UsuarioRepository";
 import { Usuario } from "../entity/Usuario";
-import { EntityTarget } from "typeorm";
+import { EntityTarget, FindOptionsWhere } from "typeorm";
 import { NextFunction, Request, response, Response } from "express";
 
 class UsuarioController extends UsuarioRepository {
@@ -14,7 +14,7 @@ class UsuarioController extends UsuarioRepository {
       const usuarios = await this.getAll();
       return response.status(200).json(usuarios);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
@@ -28,7 +28,7 @@ class UsuarioController extends UsuarioRepository {
       const usuario = await this.getBy(searchTermIdAnillo);
       return response.status(200).json(usuario);
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
@@ -42,16 +42,19 @@ class UsuarioController extends UsuarioRepository {
   }
 
   async updateUsuario(request: Request, response: Response) {
-    if (!request.body.correo || !request.body.contrasena || !request.body.id) {
-      response.status(400).json({ response: "Peticion sin cuerpo valido" });
+    if (!request.body.correo || !request.body.contrasena || !request.query.id) {
+      response.status(400).json("No se envio los datos necesarios");
       return;
     }
     try {
       const usuarioValues: Usuario = { ...request.body };
+
       const usuarioToUpdate: Usuario = new Usuario(
         usuarioValues.correo,
         usuarioValues.contrasena,
+        usuarioValues.rol,
       );
+
       const erroresValidacion =
         await this.validateCreateUsuario(usuarioToUpdate);
 
@@ -64,28 +67,29 @@ class UsuarioController extends UsuarioRepository {
         usuarioValues.contrasena,
       );
 
-      const usuarioUpdated = await this.update(
-        { id: usuarioValues.id },
-        usuarioToUpdate,
-      );
-      return response.status(200).json(usuarioUpdated);
+      await this.update({ id: usuarioValues.id }, usuarioToUpdate);
+
+      return response.status(200).json("Usuario fue editado exitosamente");
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(400).json(error);
     }
   }
 
   async deleteUsuario(request: Request, response: Response) {
-    if (!request.body.id) {
+    if (!request.query.id) {
       response.status(400).json({ response: "No se encontro id" });
       return;
     }
     try {
-      const searchTermIdUsuario: any = { ...request.body };
+      const searchTermIdUsuario: FindOptionsWhere<Usuario> = {
+        id: parseInt(request.query.id as string),
+      };
 
-      const usuarioDeleted = await this.repository.remove(searchTermIdUsuario);
-      return response.status(200).json(usuarioDeleted);
+      await this.repository.delete(searchTermIdUsuario);
+
+      return response.status(200).json("Usuario fue eliminado exitosamente");
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return response.status(500).json(error);
     }
   }
 }
