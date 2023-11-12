@@ -53,6 +53,7 @@ class UsuarioController extends UsuarioRepository {
         usuarioValues.correo,
         usuarioValues.contrasena,
         usuarioValues.rol,
+        usuarioValues.estado,
       );
 
       const erroresValidacion =
@@ -88,6 +89,26 @@ class UsuarioController extends UsuarioRepository {
       await this.repository.delete(searchTermIdUsuario);
 
       return response.status(200).json("Usuario fue eliminado exitosamente");
+    } catch (error) {
+      return response.status(500).json(error);
+    }
+  }
+
+  async desactivarUsuario(request: Request, response: Response) {
+    if (!request.query.id) {
+      response.status(400).json("No se envio los datos necesarios");
+      return;
+    }
+    try {
+      const usuarioToInactivate: Usuario = await this.getBy({
+        id: parseInt(request.query.id as string),
+      });
+
+      usuarioToInactivate.estado = false;
+
+      await this.update({ id: usuarioToInactivate.id }, usuarioToInactivate);
+
+      return response.status(200).json("Usuario fue desactivado correctamente");
     } catch (error) {
       return response.status(500).json(error);
     }

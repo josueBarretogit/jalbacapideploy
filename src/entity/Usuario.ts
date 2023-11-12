@@ -4,10 +4,16 @@ import { IsEmail, IsNotEmpty, MaxLength, MinLength } from "class-validator";
 
 @Entity({ name: "usuarios", schema: "public" })
 export class Usuario {
-  constructor(correo: string, contrasena: string, rol: string) {
+  constructor(
+    correo: string,
+    contrasena: string,
+    rol: string,
+    estado: boolean,
+  ) {
     this.correo = correo;
     this.contrasena = contrasena;
     this.rol = rol;
+    this.estado = estado;
   }
 
   @PrimaryGeneratedColumn()
@@ -36,6 +42,9 @@ export class Usuario {
 
   @Column("varchar", { length: 100 })
   rol: string;
+
+  @Column("boolean")
+  estado: boolean;
 }
 
 export default Usuario;

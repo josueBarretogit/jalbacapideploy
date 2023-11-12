@@ -16,7 +16,7 @@ class AuthController extends UsuarioController {
       return;
     }
     try {
-      const { correo, contrasena, rol }: Usuario = request.body;
+      const { correo, contrasena, rol, estado }: Usuario = request.body;
 
       const userAlreadyExist: Usuario = await this.getBy({ correo: correo });
 
@@ -25,7 +25,7 @@ class AuthController extends UsuarioController {
         return;
       }
 
-      const usuarioToCreate = new Usuario(correo, contrasena, rol);
+      const usuarioToCreate = new Usuario(correo, contrasena, rol, estado);
 
       const erroresValidacion =
         await this.validateCreateUsuario(usuarioToCreate);
@@ -101,9 +101,7 @@ class AuthController extends UsuarioController {
         .status(200)
         .json({
           isLogged: true,
-          correo: foundUsuario.correo,
-          rol: foundUsuario.rol,
-          idUsuario: foundUsuario.id,
+          usuario: foundUsuario,
           accessToken,
         });
     } catch (error) {

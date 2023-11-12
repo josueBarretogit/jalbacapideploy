@@ -9,7 +9,17 @@ const controlador = new UsuarioController(Usuario);
 const authControlador = new AuthController(Usuario);
 const router = express.Router();
 
-router.route("/register").post(authControlador.register.bind(authControlador));
+router
+  .route("/getone")
+  .post(verifyToken, controlador.getUsuario.bind(controlador));
+
+router
+  .route("/register")
+  .post(upload.none(), authControlador.register.bind(authControlador));
+
+router
+  .route("/")
+  .get(verifyToken, authControlador.getAllUsuarios.bind(authControlador));
 
 router
   .route("/login")
@@ -24,14 +34,11 @@ router
   .get(verifyToken, authControlador.logOut.bind(authControlador));
 
 router
-  .route("/")
-  .get(verifyToken, controlador.getAllUsuarios.bind(controlador))
-  .post(verifyToken, controlador.createUsuario.bind(controlador))
-  .put(verifyToken, controlador.updateUsuario.bind(controlador))
-  .delete(verifyToken, controlador.deleteUsuario.bind(controlador));
+  .route("/editar")
+  .put(verifyToken, upload.none(), controlador.updateUsuario.bind(controlador));
 
 router
-  .route("/getone")
-  .post(verifyToken, controlador.getUsuario.bind(controlador));
+  .route("/eliminar")
+  .delete(verifyToken, controlador.deleteUsuario.bind(controlador));
 
 export default router;
