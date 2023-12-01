@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { AppDataSource } from "../data-source";
 import CloudinaryService from "../services/cloudinaryService";
+import { Request, Response } from "express";
 
 class GenericRepository<T> {
   public orderById: FindOptionsOrder<T>;
@@ -62,6 +63,23 @@ class GenericRepository<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
     console.log(entitytoDelete);
     return this.repository.remove(entitytoDelete);
+  }
+
+  async searchReferencia(request: Request, response: Response) {
+    if (!request.body.referencia) {
+      response.status(400).json("No se recibó referencia");
+      return;
+    }
+    try {
+      const searchTermIdAnillo: any = request.body;
+      const anillo: any = await this.getBy(searchTermIdAnillo);
+      if (anillo) {
+        return response.status(200).json(false);
+      }
+      return response.status(200).json(true);
+    } catch (error) {
+      return response.status(500).json(error);
+    }
   }
 }
 

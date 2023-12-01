@@ -12,7 +12,9 @@ const router = express.Router();
 
 router.route("/").get(controlador.getAllAnillos.bind(controlador));
 
-router.route("/getone").post(controlador.getAnillo.bind(controlador));
+router
+  .route("/searchReferencia")
+  .post(controlador.searchReferencia.bind(controlador));
 
 router
   .route("/create")

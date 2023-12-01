@@ -16,7 +16,7 @@ class AuthController extends UsuarioController {
       return;
     }
     try {
-      const { correo, contrasena, rol, estado }: Usuario = request.body;
+      const { correo, contrasena, rol }: Usuario = request.body;
 
       const userAlreadyExist: Usuario = await this.getBy({ correo: correo });
 
@@ -25,7 +25,7 @@ class AuthController extends UsuarioController {
         return;
       }
 
-      const usuarioToCreate = new Usuario(correo, contrasena, rol, estado);
+      const usuarioToCreate = new Usuario(correo, contrasena, rol, true);
 
       const erroresValidacion =
         await this.validateCreateUsuario(usuarioToCreate);
@@ -37,7 +37,8 @@ class AuthController extends UsuarioController {
 
       usuarioToCreate.contrasena = await this.encryptPassword(contrasena);
 
-      await this.createUsuario(usuarioToCreate);
+      const createdeUser = await this.createUsuario(usuarioToCreate);
+      console.log(createdeUser);
 
       return response.status(200).json("Usuario registrado exitosamente");
     } catch (error) {
@@ -76,6 +77,7 @@ class AuthController extends UsuarioController {
         {
           id: foundUsuario.id,
           correo: foundUsuario.correo,
+          rol: foundUsuario.rol,
         },
         process.env.PRIVATE_KEY as string,
         { expiresIn: "1d" },
@@ -85,6 +87,7 @@ class AuthController extends UsuarioController {
         {
           id: foundUsuario.id,
           correo: foundUsuario.correo,
+          rol: foundUsuario.rol,
         },
         process.env.PRIVATE_REFRESH_KEY as string,
         { expiresIn: "1d" },
@@ -96,7 +99,6 @@ class AuthController extends UsuarioController {
           sameSite: "none",
           secure: true,
         })
-
         .header("authorization", accessToken)
         .status(200)
         .json({

@@ -21,20 +21,6 @@ class AnilloController extends AnilloRepository {
     }
   }
 
-  async getAnillo(request: Request, response: Response) {
-    if (!request.body.id) {
-      response.status(400).json("No se encontro id");
-      return;
-    }
-    try {
-      const searchTermIdAnillo: any = { ...request.body };
-      const anillo = await this.getBy(searchTermIdAnillo);
-      return response.status(200).json(anillo);
-    } catch (error) {
-      return response.status(400).json(error);
-    }
-  }
-
   async createAnillo(request: Request, response: Response) {
     if (!Object.keys(request.body).length) {
       response.status(400).json("Peticion sin cuerpo");

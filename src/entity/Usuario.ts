@@ -32,10 +32,7 @@ export class Usuario {
     message: "La contraseña no puede estar vacia",
   })
   @MinLength(6, {
-    message: "La contraseña es muy corta minimo 6 caracteres maximo 20",
-  })
-  @MaxLength(20, {
-    message: "La contraseña es muy corta minimo 6 caracteres maximo 20",
+    message: "La contraseña es muy corta minimo 7",
   })
   @Column("varchar", { length: 100 })
   contrasena: string;

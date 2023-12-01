@@ -42,33 +42,25 @@ class UsuarioController extends UsuarioRepository {
   }
 
   async updateUsuario(request: Request, response: Response) {
-    if (!request.body.correo || !request.body.contrasena || !request.query.id) {
+    if (!request.body.correo || !request.body.rol || !request.query.id) {
       response.status(400).json("No se envio los datos necesarios");
       return;
     }
     try {
       const usuarioValues: Usuario = { ...request.body };
 
-      const usuarioToUpdate: Usuario = new Usuario(
-        usuarioValues.correo,
-        usuarioValues.contrasena,
-        usuarioValues.rol,
-        usuarioValues.estado,
-      );
-
-      const erroresValidacion =
-        await this.validateCreateUsuario(usuarioToUpdate);
-
-      if (erroresValidacion.length > 0) {
-        response.status(400).json({ errors: erroresValidacion });
-        return;
+      if (usuarioValues.contrasena) {
+        usuarioValues.contrasena = await this.encryptPassword(
+          usuarioValues.contrasena,
+        );
       }
 
-      usuarioToUpdate.contrasena = await this.encryptPassword(
-        usuarioValues.contrasena,
-      );
+      console.log(usuarioValues);
 
-      await this.update({ id: usuarioValues.id }, usuarioToUpdate);
+      await this.update(
+        { id: parseInt(request.query.id as string) },
+        usuarioValues,
+      );
 
       return response.status(200).json("Usuario fue editado exitosamente");
     } catch (error) {
@@ -94,7 +86,7 @@ class UsuarioController extends UsuarioRepository {
     }
   }
 
-  async desactivarUsuario(request: Request, response: Response) {
+  async toggleEstadoUsuario(request: Request, response: Response) {
     if (!request.query.id) {
       response.status(400).json("No se envio los datos necesarios");
       return;
@@ -104,7 +96,7 @@ class UsuarioController extends UsuarioRepository {
         id: parseInt(request.query.id as string),
       });
 
-      usuarioToInactivate.estado = false;
+      usuarioToInactivate.estado = !usuarioToInactivate.estado;
 
       await this.update({ id: usuarioToInactivate.id }, usuarioToInactivate);
 

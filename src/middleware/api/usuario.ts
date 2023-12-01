@@ -41,4 +41,8 @@ router
   .route("/eliminar")
   .delete(verifyToken, controlador.deleteUsuario.bind(controlador));
 
+router
+  .route("/desactivar")
+  .patch(verifyToken, controlador.toggleEstadoUsuario.bind(controlador));
+
 export default router;
