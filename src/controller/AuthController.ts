@@ -73,18 +73,7 @@ class AuthController extends UsuarioController {
         return;
       }
 
-      const accessToken = jwt.sign(
-        {
-          id: foundUsuario.id,
-          correo: foundUsuario.correo,
-          rol: foundUsuario.rol,
-          accessToken: process.env.PRIVATE_KEY as string,
-        },
-        process.env.PRIVATE_KEY as string,
-        { expiresIn: "1d" },
-      );
-
-      const refreshToken = jwt.sign(
+      const cookie = jwt.sign(
         {
           id: foundUsuario.id,
           correo: foundUsuario.correo,
@@ -95,18 +84,15 @@ class AuthController extends UsuarioController {
         { expiresIn: "1d" },
       );
 
-      const ops: CookieOptions = {};
       return response
-        .cookie("refreshToken", refreshToken, {
+        .cookie("accessCookie", cookie, {
           sameSite: "lax",
           secure: true,
         })
-        .header("authorization", accessToken)
         .status(200)
         .json({
           isLogged: true,
           usuario: foundUsuario,
-          accessToken,
         });
     } catch (error) {
       return response.status(400).json({ error: error });
@@ -115,7 +101,7 @@ class AuthController extends UsuarioController {
 
   async logOut(request: Request, response: Response) {
     try {
-      response.clearCookie("refreshToken");
+      response.clearCookie("accessCookie");
       response.status(200).json({ response: "Usuario cerró sesión" });
     } catch (error) {
       response.status(400).json({ response: error });
