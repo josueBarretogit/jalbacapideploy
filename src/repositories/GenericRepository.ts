@@ -67,7 +67,8 @@ class GenericRepository<T> {
 
   async searchReferencia(request: Request, response: Response) {
     if (!request.body.referencia) {
-      response.status(400).json("No se recibó referencia");
+      console.log(request.body.referencia);
+      response.status(400).json("No se recibió referencia");
       return;
     }
     try {

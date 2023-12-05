@@ -59,7 +59,6 @@ const verifyRefreshToken = async (
     response
       .cookie("refreshToken", refreshToken, {
         maxAge: 10000 * 300,
-        httpOnly: true,
         sameSite: "strict",
       })
       .header("authorization", accessToken);

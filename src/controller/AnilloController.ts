@@ -2,9 +2,6 @@ import AnilloRepository from "../repositories/AnilloRepositorio";
 import { Anillo } from "../entity/Anillo";
 import { EntityTarget, FindOptionsWhere } from "typeorm";
 import { Request, Response } from "express";
-import * as fs from "fs/promises";
-import * as path from "path";
-import DataURIParser from "datauri/parser";
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 
 class AnilloController extends AnilloRepository {
@@ -14,6 +11,7 @@ class AnilloController extends AnilloRepository {
 
   async getAllAnillos(request: Request, response: Response) {
     try {
+      console.log(request.cookies);
       const anillos = await this.getAll();
       return response.status(200).json(anillos);
     } catch (error) {
@@ -88,11 +86,9 @@ class AnilloController extends AnilloRepository {
 
       console.log(deleteOperationResponse);
 
-      return response.status(200).json(anillo);
+      response.status(200).json(anillo);
     } catch (error) {
-      return response
-        .status(400)
-        .json(error + "No se encontró el anillo a eliminar");
+      response.status(400).json(error + "No se encontró el anillo a eliminar");
     }
   }
   async replaceImage(request: Request, response: Response) {

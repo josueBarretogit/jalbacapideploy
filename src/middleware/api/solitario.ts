@@ -13,7 +13,7 @@ router.route("/").get(controlador.getAllSolitarios.bind(controlador));
 
 router
   .route("/searchReferencia")
-  .post(controlador.searchReferencia.bind(controlador));
+  .post(upload.none(), controlador.searchReferencia.bind(controlador));
 
 router
   .route("/create")

@@ -1,5 +1,5 @@
 require("dotenv").config();
-import { Request, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import Usuario from "../entity/Usuario";
 import * as jwt from "jsonwebtoken";
 import { EntityTarget } from "typeorm";
@@ -78,6 +78,7 @@ class AuthController extends UsuarioController {
           id: foundUsuario.id,
           correo: foundUsuario.correo,
           rol: foundUsuario.rol,
+          accessToken: process.env.PRIVATE_KEY as string,
         },
         process.env.PRIVATE_KEY as string,
         { expiresIn: "1d" },
@@ -88,15 +89,16 @@ class AuthController extends UsuarioController {
           id: foundUsuario.id,
           correo: foundUsuario.correo,
           rol: foundUsuario.rol,
+          secretKey: process.env.PRIVATE_REFRESH_KEY as string,
         },
         process.env.PRIVATE_REFRESH_KEY as string,
         { expiresIn: "1d" },
       );
 
+      const ops: CookieOptions = {};
       return response
         .cookie("refreshToken", refreshToken, {
-          maxAge: 86400000,
-          sameSite: "none",
+          sameSite: "lax",
           secure: true,
         })
         .header("authorization", accessToken)
@@ -114,39 +116,9 @@ class AuthController extends UsuarioController {
   async logOut(request: Request, response: Response) {
     try {
       response.clearCookie("refreshToken");
-      return response.status(200).json({ response: "Usuario cerró sesión" });
+      response.status(200).json({ response: "Usuario cerró sesión" });
     } catch (error) {
-      return response.status(400).json({ response: error });
-    }
-  }
-
-  async refreshSession(request: Request, response: Response) {
-    const refreshToken: string = request.cookies["refreshToken"];
-    if (!refreshToken) {
-      return response.status(401).json({ response: "unable to refresh token" });
-    }
-
-    try {
-      const decoded = jwt.verify(
-        refreshToken,
-        process.env.PRIVATE_REFRESH_KEY as string,
-      ) as jwt.JwtPayload;
-
-      const newAccessToken = jwt.sign(
-        {
-          id: decoded.userId,
-          correo: decoded.correo,
-        },
-        process.env.PRIVATE_KEY as string,
-        { expiresIn: "10m" },
-      );
-
-      return response
-        .status(200)
-        .header("authorization", newAccessToken)
-        .json({ response: "token refreshed" });
-    } catch (error) {
-      return response.status(400).json(error);
+      response.status(400).json({ response: error });
     }
   }
 }
