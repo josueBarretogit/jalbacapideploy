@@ -78,18 +78,29 @@ class AuthController extends UsuarioController {
           id: foundUsuario.id,
           correo: foundUsuario.correo,
           rol: foundUsuario.rol,
-          secretKey: process.env.PRIVATE_REFRESH_KEY as string,
+          secretKey: process.env.PRIVATE_KEY as string,
         },
-        process.env.PRIVATE_REFRESH_KEY as string,
+        process.env.PRIVATE_KEY as string,
+        { expiresIn: "1d" },
+      );
+
+      const authorizationToken = jwt.sign(
+        {
+          id: foundUsuario.id,
+          correo: foundUsuario.correo,
+        },
+        process.env.AUTHORIZATION_TOKEN as string,
         { expiresIn: "1d" },
       );
 
       return response
         .cookie("accessCookie", cookie, {
-          sameSite: "lax",
+          maxAge: 8.64e7,
+          sameSite: "strict",
           secure: true,
         })
         .status(200)
+        .header("authorizationToken", authorizationToken)
         .json({
           isLogged: true,
           usuario: foundUsuario,

@@ -1,7 +1,7 @@
 import DijeController from "../../controller/DijeController";
 import * as express from "express";
 import { Dije } from "../../entity/Dije";
-import verifyToken from "../verifyToken";
+import verifyCookie from "../verifyCookie";
 import { upload } from "../../uploadImageConfig";
 import verifyImage from "../imageVerifier";
 import { handleMulterUpload } from "../multerErroHandler";
@@ -18,12 +18,12 @@ router
 
 router
   .route("/editar")
-  .put(verifyToken, upload.none(), controlador.updateDije.bind(controlador));
+  .put(verifyCookie, upload.none(), controlador.updateDije.bind(controlador));
 
 router
   .route("/create")
   .post(
-    verifyToken,
+    verifyCookie,
     handleMulterUpload,
     verifyImage,
     controlador.createDije.bind(controlador),
@@ -31,12 +31,12 @@ router
 
 router
   .route("/eliminar")
-  .delete(verifyToken, controlador.deleteDije.bind(controlador));
+  .delete(verifyCookie, controlador.deleteDije.bind(controlador));
 
 router
   .route("/replaceImage")
   .patch(
-    verifyToken,
+    verifyCookie,
     handleMulterUpload,
     verifyImage,
     controlador.replaceImage.bind(controlador),

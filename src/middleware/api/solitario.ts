@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Solitario } from "../../entity/Solitario";
-import verifyToken from "../verifyToken";
+import verifyCookie from "../verifyCookie";
 import SolitarioController from "../../controller/SolitarioController";
 import { upload } from "../../uploadImageConfig";
 import verifyImage from "../imageVerifier";
@@ -18,7 +18,7 @@ router
 router
   .route("/create")
   .post(
-    verifyToken,
+    verifyCookie,
     handleMulterUpload,
     verifyImage,
     controlador.createSolitario.bind(controlador),
@@ -27,19 +27,19 @@ router
 router
   .route("/editar")
   .put(
-    verifyToken,
+    verifyCookie,
     upload.none(),
     controlador.updateSolitario.bind(controlador),
   );
 
 router
   .route("/eliminar")
-  .delete(verifyToken, controlador.deleteSolitario.bind(controlador));
+  .delete(verifyCookie, controlador.deleteSolitario.bind(controlador));
 
 router
   .route("/replaceImage")
   .patch(
-    verifyToken,
+    verifyCookie,
     handleMulterUpload,
     verifyImage,
     controlador.replaceImage.bind(controlador),

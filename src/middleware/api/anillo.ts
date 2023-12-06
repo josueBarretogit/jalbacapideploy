@@ -1,7 +1,7 @@
 import * as express from "express";
 
 import { Anillo } from "../../entity/Anillo";
-import verifyToken from "../verifyToken";
+import verifyCookie from "../verifyCookie";
 import verifyImage from "../imageVerifier";
 import { upload } from "../../uploadImageConfig";
 import AnilloController from "../../controller/AnilloController";
@@ -19,7 +19,7 @@ router
 router
   .route("/create")
   .post(
-    verifyToken,
+    verifyCookie,
     handleMulterUpload,
     verifyImage,
     controlador.createAnillo.bind(controlador),
@@ -27,16 +27,16 @@ router
 
 router
   .route("/editar")
-  .put(verifyToken, upload.none(), controlador.updateAnillo.bind(controlador));
+  .put(verifyCookie, upload.none(), controlador.updateAnillo.bind(controlador));
 
 router
   .route("/eliminar")
-  .delete(verifyToken, controlador.deleteAnillo.bind(controlador));
+  .delete(verifyCookie, controlador.deleteAnillo.bind(controlador));
 
 router
   .route("/replaceImage")
   .patch(
-    verifyToken,
+    verifyCookie,
     handleMulterUpload,
     verifyImage,
     controlador.replaceImage.bind(controlador),
