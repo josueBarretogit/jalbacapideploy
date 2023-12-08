@@ -76,9 +76,6 @@ class AuthController extends UsuarioController {
       const cookie = jwt.sign(
         {
           id: foundUsuario.id,
-          correo: foundUsuario.correo,
-          rol: foundUsuario.rol,
-          secretKey: process.env.PRIVATE_KEY as string,
         },
         process.env.PRIVATE_KEY as string,
         { expiresIn: "1d" },
@@ -90,7 +87,7 @@ class AuthController extends UsuarioController {
           correo: foundUsuario.correo,
         },
         process.env.AUTHORIZATION_TOKEN as string,
-        { expiresIn: "1d" },
+        { expiresIn: "3m" },
       );
 
       return response
@@ -100,10 +97,11 @@ class AuthController extends UsuarioController {
           secure: true,
         })
         .status(200)
-        .header("authorizationToken", authorizationToken)
+        .header("authorization", authorizationToken)
         .json({
           isLogged: true,
           usuario: foundUsuario,
+          authorizationToken: authorizationToken,
         });
     } catch (error) {
       return response.status(400).json({ error: error });
@@ -118,6 +116,28 @@ class AuthController extends UsuarioController {
       response.status(400).json({ response: error });
     }
   }
+
+  refreshAuthorizationToken = async (request: Request, response: Response) => {
+    try {
+      const userLogged: Usuario = await this.repository.findOneBy({
+        id: parseInt(request.userId),
+      });
+
+      const authorizationToken = jwt.sign(
+        {
+          usuario: userLogged,
+        },
+        process.env.AUTHORIZATION_TOKEN as string,
+        { expiresIn: "1d" },
+      );
+      response
+        .status(200)
+        .header("authorization", authorizationToken)
+        .json(authorizationToken);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 export default AuthController;

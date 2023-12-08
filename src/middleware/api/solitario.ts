@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Solitario } from "../../entity/Solitario";
-import verifyCookie from "../verifyCookie";
+import { verifyCookie } from "../verifyCookie";
 import SolitarioController from "../../controller/SolitarioController";
 import { upload } from "../../uploadImageConfig";
 import verifyImage from "../imageVerifier";

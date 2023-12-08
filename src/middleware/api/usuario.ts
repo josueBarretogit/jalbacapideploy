@@ -1,6 +1,6 @@
 import * as express from "express";
 import Usuario from "../../entity/Usuario";
-import verifyCookie from "../verifyCookie";
+import { verifyCookie } from "../verifyCookie";
 import AuthController from "../../controller/AuthController";
 import UsuarioController from "../../controller/UsuarioController";
 import { upload } from "../../uploadImageConfig";
@@ -16,6 +16,13 @@ router
 router
   .route("/register")
   .post(upload.none(), authControlador.register.bind(authControlador));
+
+router
+  .route("/refreshAuthorization")
+  .get(
+    verifyCookie,
+    authControlador.refreshAuthorizationToken.bind(authControlador),
+  );
 
 router
   .route("/")

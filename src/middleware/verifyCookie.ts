@@ -18,15 +18,38 @@ const verifyCookie = async (
     return;
   }
   try {
-    const verifiedToken: PayloadUsuario = jwt.verify(
+    const verifiedCookie: PayloadUsuario = jwt.verify(
       accessCookie,
       process.env.PRIVATE_KEY,
     ) as PayloadUsuario;
-    request.userId = verifiedToken.id;
-    request.correo = verifiedToken.correo;
+    request.userId = verifiedCookie.id;
     next();
   } catch (error) {
     return response.status(401).json("Esta cookie es invalida");
   }
 };
-export default verifyCookie;
+
+const verifyAuthorizationToken = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const authorizationToken = request.headers["authorization"];
+  if (!authorizationToken) {
+    response.status(401).json({ response: "No puedes acceder a esto" });
+    return;
+  }
+  const token = authorizationToken.split(" ")[1];
+  try {
+    const verifiedCookie: PayloadUsuario = jwt.verify(
+      token,
+      process.env.AUTHORIZATION_TOKEN as string,
+    ) as PayloadUsuario;
+    request.userId = verifiedCookie.id;
+    next();
+  } catch (error) {
+    return response.status(401).json("Este token no es valido");
+  }
+};
+
+export { verifyCookie, verifyAuthorizationToken };

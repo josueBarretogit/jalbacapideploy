@@ -1,7 +1,7 @@
 import DijeController from "../../controller/DijeController";
 import * as express from "express";
 import { Dije } from "../../entity/Dije";
-import verifyCookie from "../verifyCookie";
+import { verifyCookie } from "../verifyCookie";
 import { upload } from "../../uploadImageConfig";
 import verifyImage from "../imageVerifier";
 import { handleMulterUpload } from "../multerErroHandler";
