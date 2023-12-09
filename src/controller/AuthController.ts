@@ -87,7 +87,7 @@ class AuthController extends UsuarioController {
           correo: foundUsuario.correo,
         },
         process.env.AUTHORIZATION_TOKEN as string,
-        { expiresIn: "3m" },
+        { expiresIn: "1d" },
       );
 
       return response
@@ -125,7 +125,9 @@ class AuthController extends UsuarioController {
 
       const authorizationToken = jwt.sign(
         {
-          usuario: userLogged,
+          id: userLogged.id,
+          correo: userLogged.correo,
+          rol: userLogged.rol,
         },
         process.env.AUTHORIZATION_TOKEN as string,
         { expiresIn: "1d" },
