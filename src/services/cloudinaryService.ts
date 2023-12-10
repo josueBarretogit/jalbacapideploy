@@ -15,7 +15,6 @@ cloudinary.config({
 
 class CloudinaryService {
   uploader = cloudinary.uploader;
-
   imgParser = new DataURIParser();
 
   async uploadImage(

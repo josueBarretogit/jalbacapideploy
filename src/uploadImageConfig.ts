@@ -15,4 +15,4 @@ const upload = multer({
   storage: storage,
 });
 
-export { upload };
+export default upload;

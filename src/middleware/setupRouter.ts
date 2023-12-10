@@ -61,5 +61,5 @@ export default function setupRouter(entityName: string, controller: any) {
       controller.replaceImage.bind(controller),
     );
 
-  return { router };
+  return router;
 }

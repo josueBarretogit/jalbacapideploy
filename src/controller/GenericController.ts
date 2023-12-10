@@ -1,14 +1,27 @@
 import { NextFunction, Request, Response } from "express";
-import { EntityTarget, FindOptionsWhere, Repository } from "typeorm";
+import {
+  EntityTarget,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  Repository,
+} from "typeorm";
 import { AppDataSource } from "../data-source";
+import { IEntity } from "../interfaces/interfaces";
+import CloudinaryService from "../services/cloudinaryService";
+import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
+import InternalServerError from "../interfaces/internalServerError";
 
-export default abstract class GenericController<T> {
-  private readonly genericRepository: Repository<T>;
+export default abstract class GenericController<T extends IEntity> {
+  readonly genericRepository: Repository<T>;
+  public readonly CloudinaryService: CloudinaryService;
   constructor(entity: EntityTarget<T>) {
     this.genericRepository = AppDataSource.getRepository(entity);
+    this.CloudinaryService = new CloudinaryService();
   }
 
-  private ThrowError(methodWhereErrorOcurred: string, error: Error) {}
+  private ThrowError(methodWhereErrorOcurred: string, error: Error) {
+    return new InternalServerError(__filename, methodWhereErrorOcurred, error);
+  }
 
   async GetAll(
     request: Request,
@@ -16,7 +29,11 @@ export default abstract class GenericController<T> {
     next: NextFunction,
   ): Promise<any> {
     try {
-      const entities = await this.genericRepository.find();
+      const entities = await this.genericRepository.find({
+        order: {
+          id: "DESC",
+        } as FindOptionsOrder<T>,
+      });
       response.status(200).json(entities);
       return entities;
     } catch (error) {
@@ -55,8 +72,17 @@ export default abstract class GenericController<T> {
     try {
       const entityToInsert: T = this.genericRepository.create();
       Object.assign(entityToInsert, request.body);
+
+      const uploaderServiceReponse: UploadApiResponse | UploadApiErrorResponse =
+        await this.CloudinaryService.uploadImage(
+          request.file.buffer,
+          request.file.originalname,
+        );
+
+      entityToInsert.foto = uploaderServiceReponse.url;
+
       const entityInserted = await this.genericRepository.save(entityToInsert);
-      response.status(200).json(entityInserted);
+      response.status(200).json({ entityInserted, foto: entityInserted.foto });
     } catch (error) {
       return next(this.ThrowError("Insert", error));
     }
@@ -72,7 +98,7 @@ export default abstract class GenericController<T> {
       return;
     }
     try {
-      const searchById = request.params as FindOptionsWhere<T>;
+      const searchById = request.query as FindOptionsWhere<T>;
       const entityToUpdate: T =
         await this.genericRepository.findOneBy(searchById);
       if (!entityToUpdate) {
@@ -98,11 +124,17 @@ export default abstract class GenericController<T> {
       return;
     }
     try {
-      const searchById = request.params as FindOptionsWhere<T>;
+      const searchById = request.query as FindOptionsWhere<T>;
       const entityToDelete: T =
         await this.genericRepository.findOneBy(searchById);
+
+      const deleteOperationResponse = await this.CloudinaryService.deleteImage(
+        entityToDelete.foto,
+      );
+
       const entityDeleted: T =
         await this.genericRepository.remove(entityToDelete);
+
       response.status(200).json(entityDeleted);
       return entityToDelete;
     } catch (error) {
@@ -110,22 +142,64 @@ export default abstract class GenericController<T> {
     }
   }
 
-  async searchReferencia(request: Request, response: Response) {
+  async searchReferencia(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
     if (!request.body.referencia) {
-      console.log(request.body.referencia);
       response.status(400).json("No se recibió referencia");
       return;
     }
     try {
-      const searchTermIdAnillo: any = request.body;
-      const anillo: any =
-        await this.genericRepository.findOneBy(searchTermIdAnillo);
-      if (anillo) {
+      const searchTermIdEntity: any = request.body;
+      const entity: any =
+        await this.genericRepository.findOneBy(searchTermIdEntity);
+      if (entity) {
         return response.status(200).json(false);
       }
       return response.status(200).json(true);
     } catch (error) {
-      return response.status(500).json(error);
+      return next(this.ThrowError("Delete", error));
+    }
+  }
+
+  async replaceImage(request: Request, response: Response) {
+    if (!Object.keys(request.query.id)) {
+      console.log(request.body);
+      response.status(400).json("Peticion sin cuerpo");
+      return;
+    }
+    try {
+      const searchTermIdEntity: any = request.body;
+      const anilloToReplaceImage =
+        await this.genericRepository.findOneBy(searchTermIdEntity);
+
+      const url = anilloToReplaceImage.foto;
+      const buffer = request.file.buffer;
+      const filename = request.file.originalname;
+
+      const cloudinaryResponse = await this.CloudinaryService.updateImage(
+        url,
+        buffer,
+        filename,
+      );
+
+      if ("message" in cloudinaryResponse) {
+        return response.status(500).json(cloudinaryResponse.message);
+      }
+
+      anilloToReplaceImage.foto = cloudinaryResponse.url;
+
+      const updatedAnillo: Anillo = await this.genericRepository.save(
+        { id: anilloToReplaceImage.id },
+        anilloToReplaceImage,
+      );
+      console.log(cloudinaryResponse);
+
+      return response.status(200).json(updatedAnillo);
+    } catch (error) {
+      return response.status(400).json(error);
     }
   }
 }

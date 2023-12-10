@@ -1,5 +1,4 @@
-require("dotenv").config();
-
+import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -11,6 +10,8 @@ import solitarioMiddleware from "./middleware/api/solitario";
 import usuarioMiddleware from "./middleware/api/usuario";
 import corsOptions from "./config/cors";
 import notFound from "./middleware/notFound";
+import errorHandler from "./middleware/errorHandler";
+dotenv.config();
 
 AppDataSource.initialize()
   .then(() => console.log(`Database connected`))
@@ -27,6 +28,8 @@ app.use("/api/usuarios", usuarioMiddleware);
 app.use("/api/nombres", anilloMiddleware);
 app.use("/api/dijes", dijeMiddleware);
 app.use("/api/solitarios", solitarioMiddleware);
+
+app.use(errorHandler);
 
 app.use(notFound);
 
