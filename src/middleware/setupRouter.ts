@@ -3,11 +3,15 @@ import { verifyCookie } from "./verifyCookie";
 import verifyAuthorizationToken from "./verifyJwt";
 import verifyImage from "./imageVerifier";
 import { handleMulterUpload } from "./multerErroHandler";
+import GenericController from "../controller/GenericController";
 
-export default function setupRouter(entityName: string, controller: any) {
+export default function setupRouter(
+  entityName: string,
+  controller: GenericController<any>,
+) {
   const router = express.Router();
 
-  router.route("/").get(controller.GetAll.bind(controller));
+  router.route("/").get(controller.GetAll);
 
   router
     .route("/create")
@@ -16,40 +20,24 @@ export default function setupRouter(entityName: string, controller: any) {
       verifyAuthorizationToken,
       handleMulterUpload,
       verifyImage,
-      controller.Insert.bind(controller),
+      controller.Insert,
     );
 
   router
     .route("/editar")
-    .put(
-      verifyCookie,
-      verifyAuthorizationToken,
-      controller.Update.bind(controller),
-    );
+    .put(verifyCookie, verifyAuthorizationToken, controller.Update);
 
   router
     .route("/eliminar")
-    .delete(
-      verifyCookie,
-      verifyAuthorizationToken,
-      controller.Delete.bind(controller),
-    );
+    .delete(verifyCookie, verifyAuthorizationToken, controller.Delete);
 
   router
     .route("/replaceImage")
-    .delete(
-      verifyCookie,
-      verifyAuthorizationToken,
-      controller.Delete.bind(controller),
-    );
+    .delete(verifyCookie, verifyAuthorizationToken, controller.Delete);
 
   router
     .route("/searchReferencia")
-    .post(
-      verifyCookie,
-      verifyAuthorizationToken,
-      controller.searchReferencia.bind(controller),
-    );
+    .post(verifyCookie, verifyAuthorizationToken, controller.SearchReferencia);
 
   router
     .route("/replaceImage")
@@ -58,7 +46,7 @@ export default function setupRouter(entityName: string, controller: any) {
       verifyAuthorizationToken,
       handleMulterUpload,
       verifyImage,
-      controller.replaceImage.bind(controller),
+      controller.ReplaceImage,
     );
 
   return router;

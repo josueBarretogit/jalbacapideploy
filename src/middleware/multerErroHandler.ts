@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import { upload } from "../uploadImageConfig";
+import upload from "../uploadImageConfig";
 
 export function handleMulterUpload(
   req: Request,

@@ -3,7 +3,7 @@ import Usuario from "../../entity/Usuario";
 import { verifyCookie } from "../verifyCookie";
 import AuthController from "../../controller/AuthController";
 import UsuarioController from "../../controller/UsuarioController";
-import { upload } from "../../uploadImageConfig";
+import upload from "../../uploadImageConfig";
 
 const controlador = new UsuarioController(Usuario);
 const authControlador = new AuthController(Usuario);

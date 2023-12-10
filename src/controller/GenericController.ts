@@ -11,7 +11,7 @@ import CloudinaryService from "../services/cloudinaryService";
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 import InternalServerError from "../interfaces/internalServerError";
 
-export default abstract class GenericController<T extends IEntity> {
+export default abstract class GenericController<T extends IEntity = any> {
   readonly genericRepository: Repository<T>;
   public readonly CloudinaryService: CloudinaryService;
   constructor(entity: EntityTarget<T>) {
@@ -23,11 +23,11 @@ export default abstract class GenericController<T extends IEntity> {
     return new InternalServerError(__filename, methodWhereErrorOcurred, error);
   }
 
-  async GetAll(
+  GetAll = async (
     request: Request,
     response: Response,
     next: NextFunction,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       const entities = await this.genericRepository.find({
         order: {
@@ -39,13 +39,13 @@ export default abstract class GenericController<T extends IEntity> {
     } catch (error) {
       return next(this.ThrowError("GetAll", error));
     }
-  }
+  };
 
-  async GetBy(
+  GetBy = async (
     request: Request,
     response: Response,
     next: NextFunction,
-  ): Promise<any> {
+  ): Promise<any> => {
     if (!request.body) {
       response.status(400).json("Falta cuerpo");
       return;
@@ -58,13 +58,13 @@ export default abstract class GenericController<T extends IEntity> {
     } catch (error) {
       return next(this.ThrowError("GetBy", error));
     }
-  }
+  };
 
-  async Insert(
+  Insert = async (
     request: Request,
     response: Response,
     next: NextFunction,
-  ): Promise<any> {
+  ): Promise<any> => {
     if (!request.body) {
       response.status(400).json("Falta body");
       return;
@@ -86,14 +86,14 @@ export default abstract class GenericController<T extends IEntity> {
     } catch (error) {
       return next(this.ThrowError("Insert", error));
     }
-  }
+  };
 
-  async Update(
+  Update = async (
     request: Request,
     response: Response,
     next: NextFunction,
-  ): Promise<any> {
-    if (!request.body || !request.params.id) {
+  ): Promise<any> => {
+    if (!request.body || !request.query.id) {
       response.status(400).json("Falta body o id");
       return;
     }
@@ -112,14 +112,14 @@ export default abstract class GenericController<T extends IEntity> {
     } catch (error) {
       return next(this.ThrowError("Update", error));
     }
-  }
+  };
 
-  async Delete(
+  Delete = async (
     request: Request,
     response: Response,
     next: NextFunction,
-  ): Promise<any> {
-    if (!request.params.id) {
+  ): Promise<any> => {
+    if (!request.query.id) {
       response.status(400).json("Falta id");
       return;
     }
@@ -140,13 +140,13 @@ export default abstract class GenericController<T extends IEntity> {
     } catch (error) {
       return next(this.ThrowError("Delete", error));
     }
-  }
+  };
 
-  async searchReferencia(
+  SearchReferencia = async (
     request: Request,
     response: Response,
     next: NextFunction,
-  ) {
+  ) => {
     if (!request.body.referencia) {
       response.status(400).json("No se recibió referencia");
       return;
@@ -160,11 +160,15 @@ export default abstract class GenericController<T extends IEntity> {
       }
       return response.status(200).json(true);
     } catch (error) {
-      return next(this.ThrowError("Delete", error));
+      return next(this.ThrowError("SearchReferencia", error));
     }
-  }
+  };
 
-  async replaceImage(request: Request, response: Response) {
+  ReplaceImage = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
     if (!Object.keys(request.query.id)) {
       console.log(request.body);
       response.status(400).json("Peticion sin cuerpo");
@@ -185,21 +189,14 @@ export default abstract class GenericController<T extends IEntity> {
         filename,
       );
 
-      if ("message" in cloudinaryResponse) {
-        return response.status(500).json(cloudinaryResponse.message);
-      }
-
       anilloToReplaceImage.foto = cloudinaryResponse.url;
 
-      const updatedAnillo: Anillo = await this.genericRepository.save(
-        { id: anilloToReplaceImage.id },
-        anilloToReplaceImage,
-      );
-      console.log(cloudinaryResponse);
+      const updatedAnillo: T =
+        await this.genericRepository.save(anilloToReplaceImage);
 
       return response.status(200).json(updatedAnillo);
     } catch (error) {
-      return response.status(400).json(error);
+      return next(this.ThrowError("ReplaceImage", error));
     }
-  }
+  };
 }
