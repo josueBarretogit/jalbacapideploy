@@ -15,7 +15,6 @@ export default abstract class GenericController<T extends IEntity = any> {
   readonly genericRepository: Repository<T>;
   public readonly CloudinaryService: CloudinaryService;
   constructor(entity: EntityTarget<T>) {
-    this.genericRepository = AppDataSource.getRepository(entity);
     this.CloudinaryService = new CloudinaryService();
   }
 
@@ -99,13 +98,16 @@ export default abstract class GenericController<T extends IEntity = any> {
     }
     try {
       const searchById = request.query as FindOptionsWhere<T>;
+      console.log(searchById);
       const entityToUpdate: T =
         await this.genericRepository.findOneBy(searchById);
+      console.log(entityToUpdate);
       if (!entityToUpdate) {
         response.status(200).json("No se encontro esta entidad");
         return;
       }
       Object.assign(entityToUpdate, request.body);
+      console.log(request.body);
       const entityUpdated = await this.genericRepository.save(entityToUpdate);
       response.status(200).json(entityUpdated);
       return entityUpdated;
@@ -175,10 +177,11 @@ export default abstract class GenericController<T extends IEntity = any> {
       return;
     }
     try {
-      const searchTermIdEntity: any = request.body;
+      const searchTermIdEntity: any = request.query;
       const anilloToReplaceImage =
         await this.genericRepository.findOneBy(searchTermIdEntity);
 
+      console.log(anilloToReplaceImage);
       const url = anilloToReplaceImage.foto;
       const buffer = request.file.buffer;
       const filename = request.file.originalname;

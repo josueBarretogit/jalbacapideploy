@@ -3,6 +3,7 @@ import UsuarioRepository from "../repositories/UsuarioRepository";
 import { Usuario } from "../entity/Usuario";
 import { EntityTarget, FindOptionsWhere } from "typeorm";
 import { NextFunction, Request, response, Response } from "express";
+import InternalServerError from "../interfaces/internalServerError";
 
 class UsuarioController extends UsuarioRepository {
   constructor(entity: EntityTarget<Usuario>) {
@@ -105,6 +106,25 @@ class UsuarioController extends UsuarioRepository {
       return response.status(500).json(error);
     }
   }
+
+  GetBy = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ): Promise<any> => {
+    if (!request.body) {
+      response.status(400).json("Falta cuerpo");
+      return;
+    }
+    try {
+      const searchTerm = request.body as FindOptionsWhere<Usuario>;
+      const entity = await this.repository.findOneBy(searchTerm);
+      response.status(200).json(entity);
+      return entity;
+    } catch (error) {
+      return new InternalServerError(__filename, "GetBy", error);
+    }
+  };
 }
 
 export default UsuarioController;

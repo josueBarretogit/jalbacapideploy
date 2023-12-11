@@ -4,6 +4,7 @@ import { verifyCookie } from "../verifyCookie";
 import AuthController from "../../controller/AuthController";
 import UsuarioController from "../../controller/UsuarioController";
 import upload from "../../uploadImageConfig";
+import verifyAuthorizationToken from "../verifyJwt";
 
 const controlador = new UsuarioController(Usuario);
 const authControlador = new AuthController(Usuario);
@@ -51,5 +52,14 @@ router
 router
   .route("/desactivar")
   .patch(verifyCookie, controlador.toggleEstadoUsuario.bind(controlador));
+
+router
+  .route("/getBy")
+  .post(
+    verifyCookie,
+    verifyAuthorizationToken,
+    upload.none(),
+    controlador.GetBy,
+  );
 
 export default router;

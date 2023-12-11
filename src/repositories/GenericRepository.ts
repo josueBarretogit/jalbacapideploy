@@ -12,7 +12,7 @@ import { Request, Response } from "express";
 
 class GenericRepository<T> {
   public orderById: FindOptionsOrder<T>;
-  protected repository: Repository<T>;
+  repository: Repository<T>;
   public CloudinaryService: CloudinaryService;
 
   constructor(entity: EntityTarget<T>) {

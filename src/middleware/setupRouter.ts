@@ -4,6 +4,7 @@ import verifyAuthorizationToken from "./verifyJwt";
 import verifyImage from "./imageVerifier";
 import { handleMulterUpload } from "./multerErroHandler";
 import GenericController from "../controller/GenericController";
+import upload from "../uploadImageConfig";
 
 export default function setupRouter(
   entityName: string,
@@ -12,6 +13,15 @@ export default function setupRouter(
   const router = express.Router();
 
   router.route("/").get(controller.GetAll);
+
+  router
+    .route("/getBy")
+    .post(
+      verifyCookie,
+      verifyAuthorizationToken,
+      upload.none(),
+      controller.GetBy,
+    );
 
   router
     .route("/create")
@@ -25,14 +35,15 @@ export default function setupRouter(
 
   router
     .route("/editar")
-    .put(verifyCookie, verifyAuthorizationToken, controller.Update);
+    .put(
+      verifyCookie,
+      verifyAuthorizationToken,
+      upload.none(),
+      controller.Update,
+    );
 
   router
     .route("/eliminar")
-    .delete(verifyCookie, verifyAuthorizationToken, controller.Delete);
-
-  router
-    .route("/replaceImage")
     .delete(verifyCookie, verifyAuthorizationToken, controller.Delete);
 
   router
