@@ -8,7 +8,6 @@ export default async function verifyAuthorizationToken(
   next: NextFunction,
 ) {
   const authorizationToken = request.headers["authorization"];
-  console.log(authorizationToken);
   if (!authorizationToken) {
     response.status(401).json({ response: "No puedes acceder a esto" });
     return;

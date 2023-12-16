@@ -1,16 +1,17 @@
 require("dotenv").config();
-import { CookieOptions, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Usuario from "../entity/Usuario";
 import * as jwt from "jsonwebtoken";
 import { EntityTarget } from "typeorm";
 import UsuarioController from "./UsuarioController";
+import InternalServerError from "../interfaces/internalServerError";
 
 class AuthController extends UsuarioController {
   constructor(usuario: EntityTarget<Usuario>) {
     super(usuario);
   }
 
-  async register(request: Request, response: Response) {
+  async register(request: Request, response: Response, next: NextFunction) {
     if (!request.body.correo || !request.body.contrasena) {
       response.status(400).json("No se ingresó los datos necesarios");
       return;
@@ -38,15 +39,14 @@ class AuthController extends UsuarioController {
       usuarioToCreate.contrasena = await this.encryptPassword(contrasena);
 
       const createdeUser = await this.createUsuario(usuarioToCreate);
-      console.log(createdeUser);
 
       return response.status(200).json("Usuario registrado exitosamente");
     } catch (error) {
-      return response.status(500).json(error);
+      return next(new InternalServerError(__filename, "register", error));
     }
   }
 
-  async logIn(request: Request, response: Response) {
+  async logIn(request: Request, response: Response, next: NextFunction) {
     if (!request.body.correo || !request.body.contrasena) {
       response.status(400).json({ response: "Peticion sin cuerpo valido" });
       return;
@@ -54,6 +54,7 @@ class AuthController extends UsuarioController {
     try {
       const { correo, contrasena } = request.body;
       const foundUsuario: Usuario = await this.getBy({ correo: correo });
+
       if (!foundUsuario) {
         response.status(400).json({
           isLogged: false,
@@ -61,6 +62,16 @@ class AuthController extends UsuarioController {
         });
         return;
       }
+
+      if (!foundUsuario.estado) {
+        response.status(401).json({
+          isLogged: false,
+          response:
+            "Este usuario esta desactivado por lo tanto no tiene acceso",
+        });
+        return;
+      }
+
       const passwordMatch = await this.comparePassword(
         contrasena,
         foundUsuario.contrasena,
@@ -95,6 +106,7 @@ class AuthController extends UsuarioController {
           maxAge: 8.64e7,
           sameSite: "strict",
           secure: true,
+          httpOnly: true,
         })
         .status(200)
         .header("authorization", authorizationToken)
@@ -104,20 +116,24 @@ class AuthController extends UsuarioController {
           authorizationToken: authorizationToken,
         });
     } catch (error) {
-      return response.status(400).json({ error: error });
+      return next(new InternalServerError(__filename, "Login", error));
     }
   }
 
-  async logOut(request: Request, response: Response) {
+  async logOut(request: Request, response: Response, next: NextFunction) {
     try {
       response.clearCookie("accessCookie");
       response.status(200).json({ response: "Usuario cerró sesión" });
     } catch (error) {
-      response.status(400).json({ response: error });
+      return next(new InternalServerError(__filename, "Login", error));
     }
   }
 
-  refreshAuthorizationToken = async (request: Request, response: Response) => {
+  refreshAuthorizationToken = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
     try {
       const userLogged: Usuario = await this.repository.findOneBy({
         id: parseInt(request.userId),
@@ -137,7 +153,9 @@ class AuthController extends UsuarioController {
         .header("authorization", authorizationToken)
         .json(authorizationToken);
     } catch (error) {
-      console.log(error);
+      return next(
+        new InternalServerError(__filename, "refreshAuthorizationToken", error),
+      );
     }
   };
 }

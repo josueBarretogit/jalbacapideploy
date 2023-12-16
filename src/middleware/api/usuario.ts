@@ -12,11 +12,20 @@ const router = express.Router();
 
 router
   .route("/getone")
-  .post(verifyCookie, controlador.getUsuario.bind(controlador));
+  .post(
+    verifyCookie,
+    verifyAuthorizationToken,
+    controlador.getUsuario.bind(controlador),
+  );
 
 router
   .route("/register")
-  .post(upload.none(), authControlador.register.bind(authControlador));
+  .post(
+    upload.none(),
+    verifyCookie,
+    verifyAuthorizationToken,
+    authControlador.register.bind(authControlador),
+  );
 
 router
   .route("/refreshAuthorization")
@@ -27,7 +36,11 @@ router
 
 router
   .route("/")
-  .get(verifyCookie, authControlador.getAllUsuarios.bind(authControlador));
+  .get(
+    verifyCookie,
+    verifyAuthorizationToken,
+    authControlador.getAllUsuarios.bind(authControlador),
+  );
 
 router
   .route("/login")
@@ -35,23 +48,28 @@ router
 
 router
   .route("/logout")
-  .get(verifyCookie, authControlador.logOut.bind(authControlador));
+  .get(
+    verifyCookie,
+    verifyAuthorizationToken,
+    authControlador.logOut.bind(authControlador),
+  );
 
 router
   .route("/editar")
   .put(
     verifyCookie,
+    verifyAuthorizationToken,
     upload.none(),
     controlador.updateUsuario.bind(controlador),
   );
 
 router
-  .route("/eliminar")
-  .delete(verifyCookie, controlador.deleteUsuario.bind(controlador));
-
-router
   .route("/desactivar")
-  .patch(verifyCookie, controlador.toggleEstadoUsuario.bind(controlador));
+  .patch(
+    verifyCookie,
+    verifyAuthorizationToken,
+    controlador.toggleEstadoUsuario.bind(controlador),
+  );
 
 router
   .route("/getBy")

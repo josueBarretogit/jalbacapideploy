@@ -10,16 +10,20 @@ class UsuarioController extends UsuarioRepository {
     super(entity);
   }
 
-  async getAllUsuarios(request: Request, response: Response) {
+  async getAllUsuarios(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
     try {
       const usuarios = await this.getAll();
       return response.status(200).json(usuarios);
     } catch (error) {
-      return response.status(400).json(error);
+      return next(new InternalServerError(__filename, "getAllUsuarios", error));
     }
   }
 
-  async getUsuario(request: Request) {
+  async getUsuario(request: Request, response: Response, next: NextFunction) {
     if (!request.body.id) {
       response.status(400).json({ response: "No se encontro id" });
       return;
@@ -29,7 +33,7 @@ class UsuarioController extends UsuarioRepository {
       const usuario = await this.getBy(searchTermIdAnillo);
       return response.status(200).json(usuario);
     } catch (error) {
-      return response.status(400).json(error);
+      return next(new InternalServerError(__filename, "getUsuario", error));
     }
   }
 
@@ -38,12 +42,16 @@ class UsuarioController extends UsuarioRepository {
       const createdUser: Usuario = await this.create(usuario);
       return createdUser;
     } catch (error) {
-      console.log(error);
+      return error;
     }
   }
 
-  async updateUsuario(request: Request, response: Response) {
-    if (!request.body.correo || !request.body.rol || !request.query.id) {
+  async updateUsuario(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    if (!request.body.rol || !request.query.id) {
       response.status(400).json("No se envio los datos necesarios");
       return;
     }
@@ -56,8 +64,6 @@ class UsuarioController extends UsuarioRepository {
         );
       }
 
-      console.log(usuarioValues);
-
       await this.update(
         { id: parseInt(request.query.id as string) },
         usuarioValues,
@@ -65,11 +71,15 @@ class UsuarioController extends UsuarioRepository {
 
       return response.status(200).json("Usuario fue editado exitosamente");
     } catch (error) {
-      return response.status(400).json(error);
+      return next(new InternalServerError(__filename, "updateUsuario", error));
     }
   }
 
-  async deleteUsuario(request: Request, response: Response) {
+  async deleteUsuario(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
     if (!request.query.id) {
       response.status(400).json({ response: "No se encontro id" });
       return;
@@ -83,11 +93,15 @@ class UsuarioController extends UsuarioRepository {
 
       return response.status(200).json("Usuario fue eliminado exitosamente");
     } catch (error) {
-      return response.status(500).json(error);
+      return next(new InternalServerError(__filename, "deleteUsuario", error));
     }
   }
 
-  async toggleEstadoUsuario(request: Request, response: Response) {
+  async toggleEstadoUsuario(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
     if (!request.query.id) {
       response.status(400).json("No se envio los datos necesarios");
       return;
@@ -103,7 +117,9 @@ class UsuarioController extends UsuarioRepository {
 
       return response.status(200).json("Usuario fue desactivado correctamente");
     } catch (error) {
-      return response.status(500).json(error);
+      return next(
+        new InternalServerError(__filename, "toggleEstadoUsuario", error),
+      );
     }
   }
 

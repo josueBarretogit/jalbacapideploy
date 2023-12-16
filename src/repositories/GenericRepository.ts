@@ -61,13 +61,11 @@ class GenericRepository<T> {
 
   async delete(searchTerm: FindOptionsWhere<T>): Promise<T> {
     const entitytoDelete: T = await this.repository.findOneBy(searchTerm);
-    console.log(entitytoDelete);
     return this.repository.remove(entitytoDelete);
   }
 
   async searchReferencia(request: Request, response: Response) {
     if (!request.body.referencia) {
-      console.log(request.body.referencia);
       response.status(400).json("No se recibió referencia");
       return;
     }

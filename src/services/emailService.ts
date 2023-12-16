@@ -19,7 +19,7 @@ export default class EmailService {
       from: process.env.EMAIL,
       to: process.env.EMAIL,
       subject: `Ocurrió un error de tipo: ${this.internalServerError.error.name} fecha: ${this.internalServerError.errorDate}`,
-      text: `Detalles del error:
+      text: `Detalles del error: 
       ${this.internalServerError.error.stack}`,
     };
   }

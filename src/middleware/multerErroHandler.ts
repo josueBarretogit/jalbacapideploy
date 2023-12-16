@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import upload from "../uploadImageConfig";
+import InternalServerError from "../interfaces/internalServerError";
 
 export function handleMulterUpload(
   req: Request,
@@ -12,7 +13,9 @@ export function handleMulterUpload(
     if (error instanceof multer.MulterError) {
       return res.status(500).json("No puedes subir ese tipo de archivo");
     } else if (error) {
-      return res.status(500).json("No puedes subir ese tipo de archivo");
+      return next(
+        new InternalServerError(__filename, "handleMulterUpload", error),
+      );
     }
     next();
   });

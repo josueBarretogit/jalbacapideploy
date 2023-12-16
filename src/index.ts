@@ -11,7 +11,6 @@ import usuarioMiddleware from "./middleware/api/usuario";
 import corsOptions from "./config/cors";
 import notFound from "./middleware/notFound";
 import errorHandler from "./middleware/errorHandler";
-import methodOverride from "method-override";
 dotenv.config();
 
 AppDataSource.initialize()
@@ -30,7 +29,6 @@ app.use("/api/nombres", anilloMiddleware);
 app.use("/api/dijes", dijeMiddleware);
 app.use("/api/solitarios", solitarioMiddleware);
 
-app.use(methodOverride());
 app.use(errorHandler);
 app.use(notFound);
 

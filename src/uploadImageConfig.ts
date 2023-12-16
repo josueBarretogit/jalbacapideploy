@@ -6,7 +6,6 @@ const storage = multer.memoryStorage();
 const upload = multer({
   fileFilter: (req: Request, file, callback) => {
     if (!file.mimetype.includes("image")) {
-      console.log(file.mimetype);
       callback(new Error("Solo se permiten subir imagenes"));
     }
     callback(null, true);
