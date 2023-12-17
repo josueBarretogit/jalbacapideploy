@@ -1,22 +1,13 @@
 import * as cors from "cors";
+require("dotenv").config();
 
-const whitelist = [
-  "https://anillosjalbacapi.onrender.com",
-  "https://anillos-jalbac.web.app",
-  "https://anillos-jalbac-79f5f.web.app",
-  "http://192.168.0.108:3000",
-];
+const whitelist = [process.env.API_CLIENT_ONE, process.env.API_CLIENT_TWO];
 
 const corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
-    if (
-      whitelist.indexOf(origin) !== -1 ||
-      !origin ||
-      /http:\/\/localhost:\w/.test(origin)
-    ) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
-      console.log(origin);
       callback(new Error("No esta permitodo debido a CORS"));
     }
   },
