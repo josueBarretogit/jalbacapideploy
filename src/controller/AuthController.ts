@@ -104,7 +104,6 @@ class AuthController extends UsuarioController {
       return response
         .cookie("accessCookie", cookie, {
           maxAge: 8.64e7,
-          sameSite: "strict",
           secure: true,
           httpOnly: true,
         })
