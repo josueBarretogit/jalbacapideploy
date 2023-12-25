@@ -79,7 +79,6 @@ export default abstract class GenericController<T extends IEntity = any> {
           request.file.originalname,
         );
 
-      console.log(uploaderServiceReponse);
       entityToInsert.foto = uploaderServiceReponse.secure_url;
 
       const entityInserted = await this.genericRepository.save(entityToInsert);
