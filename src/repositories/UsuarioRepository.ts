@@ -15,7 +15,7 @@ class UsuarioRepository extends GenericRepository<Usuario> {
   }
 
   async encryptPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 15);
+    return bcrypt.hash(password, 9);
   }
 
   async comparePassword(

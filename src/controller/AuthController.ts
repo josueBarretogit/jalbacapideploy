@@ -39,6 +39,7 @@ class AuthController extends UsuarioController {
       usuarioToCreate.contrasena = await this.encryptPassword(contrasena);
 
       const createdeUser = await this.createUsuario(usuarioToCreate);
+      console.log(createdeUser);
 
       return response.status(200).json("Usuario registrado exitosamente");
     } catch (error) {
