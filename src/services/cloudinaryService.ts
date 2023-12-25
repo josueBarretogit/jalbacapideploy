@@ -26,7 +26,9 @@ class CloudinaryService {
       buffer,
     );
 
-    const imgMetaData = await this.uploader.upload(imgData.content);
+    const imgMetaData = await this.uploader.upload(imgData.content, {
+      access_mode: "authenticated",
+    });
 
     return imgMetaData;
   }

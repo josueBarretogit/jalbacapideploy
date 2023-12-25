@@ -79,7 +79,8 @@ export default abstract class GenericController<T extends IEntity = any> {
           request.file.originalname,
         );
 
-      entityToInsert.foto = uploaderServiceReponse.url;
+      console.log(uploaderServiceReponse);
+      entityToInsert.foto = uploaderServiceReponse.secure_url;
 
       const entityInserted = await this.genericRepository.save(entityToInsert);
       response.status(200).json({ entityInserted, foto: entityInserted.foto });
@@ -188,7 +189,7 @@ export default abstract class GenericController<T extends IEntity = any> {
         filename,
       );
 
-      anilloToReplaceImage.foto = cloudinaryResponse.url;
+      anilloToReplaceImage.foto = cloudinaryResponse.secure_url;
 
       const updatedAnillo: T =
         await this.genericRepository.save(anilloToReplaceImage);
